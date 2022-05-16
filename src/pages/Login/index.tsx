@@ -17,7 +17,7 @@ export default function Login() {
                 mobile: values.username,
                 code: values.password,
             });
-            global.setCookie("_WEB_TOKEN_", res.data.token);
+            global.setCookie("_Bearer_TOKEN_", res.data.token);
             navigation("/", {
                 replace: true,
                 state: {},
@@ -33,7 +33,7 @@ export default function Login() {
         //     code: values.password,
         // })
         //     .then((res: any) => {
-        //         global.setCookie("_WEB_TOKEN_", res.data.token);
+        //         global.setCookie("_Bearer_TOKEN_", res.data.token);
         //         navigation("/", {
         //             replace: true,
         //             state: {},

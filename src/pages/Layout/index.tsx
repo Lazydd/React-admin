@@ -62,7 +62,7 @@ export default function Layout() {
         },
     ];
     function exitClick() {
-        global.delCookie("_WEB_TOKEN_");
+        global.delCookie("_Bearer_TOKEN_");
         message.success("退出成功");
         navigation("/login", {
             replace: true,
