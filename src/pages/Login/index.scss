@@ -30,6 +30,21 @@ section {
         .login-form-button {
             width: 100%;
         }
+        .verification {
+            width: 200px;
+        }
+        .verification-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            .ant-form-item {
+                margin-bottom: 0;
+            }
+            .verificationImg {
+                cursor: pointer;
+            }
+            margin-bottom: 20px;
+        }
     }
     .box {
         position: relative;

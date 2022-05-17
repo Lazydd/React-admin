@@ -9,10 +9,10 @@ const instance = axios.create({
 instance.interceptors.request.use((request: any) => {
     request.url = "/v1_0" + request.url;
     console.log(request.url);
-    
-    if (global.getCookie("_Bearer_TOKEN_")) {
+
+    if (global.getCookie("CXCSESSID")) {
         request.headers["Authorization"] =
-            "Bearer " + `${global.getCookie("_Bearer_TOKEN_")}`;
+            "JSESSIONID" + `${global.getCookie("CXCSESSID")}`;
     }
 
     if (
