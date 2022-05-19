@@ -1,7 +1,6 @@
 import axios from "axios";
 import qs from "qs";
 import global from "./global";
-
 const instance = axios.create({
     // baseUrl: "http://",
     // timeout: 30000,
@@ -10,10 +9,10 @@ instance.interceptors.request.use((request: any) => {
     request.url = "/v1_0" + request.url;
     console.log(request.url);
 
-    if (global.getCookie("CXCSESSID")) {
-        request.headers["Authorization"] =
-            "JSESSIONID" + `${global.getCookie("CXCSESSID")}`;
-    }
+    // if (global.getCookie("CXCSESSID")) {
+    //     request.headers["Authorization"] =
+    //         "CXCSESSID" + `${global.getCookie("CXCSESSID")}`;
+    // }
 
     if (
         request.data &&

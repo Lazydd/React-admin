@@ -17,7 +17,7 @@ export const userLogin = (data: object) => {
 };
 
 export const getUserInfo = () => {
-    return instance.get("/user/profile");
+    return instance.get("/sys/user/info");
 };
 
 export const login = () => {
@@ -26,4 +26,8 @@ export const login = () => {
         method: "get",
         responseType: "blob",
     });
+};
+
+export const getMenuList = () => {
+    return instance.get("/sys/menu/list");
 };

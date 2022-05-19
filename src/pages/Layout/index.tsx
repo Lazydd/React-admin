@@ -37,28 +37,28 @@ export default function Layout() {
     const items = [
         { label: "首页", key: "/", icon: <SettingOutlined /> }, // 菜单项务必填写 key
         {
-            label: "子菜单",
+            label: "文章管理",
             key: "sub1",
             icon: <SettingOutlined />,
             children: [
                 {
-                    label: "子菜单项",
+                    label: "文章管理",
                     key: "/publish2",
                     icon: <SettingOutlined />,
                 },
             ],
         },
         {
-            label: "子菜单",
+            label: "网址管理",
             key: "sub2",
             icon: <SettingOutlined />,
-            children: [{ label: "子菜单项", key: "/publish3" }],
+            children: [{ label: "网址管理", key: "/publish" }],
         },
         {
-            label: "子菜单",
+            label: "系统维护",
             key: "sub3",
             icon: <SettingOutlined />,
-            children: [{ label: "子菜单项", key: "/publish" }],
+            children: [{ label: "菜单管理", key: "/menuMaintain" }],
         },
     ];
     function exitClick() {
@@ -133,7 +133,7 @@ export default function Layout() {
                                 }}
                                 size="large"
                             >
-                                {userInfo.gender}
+                                {userInfo.username}
                             </Avatar>
                         </Space>
                     </a>

@@ -22,7 +22,7 @@ export default function Login() {
                 password: values.password,
                 verification: values.verification,
             });
-            global.setCookie("CXCSESSID", res.data.token);
+            // global.setCookie("CXCSESSID", res.data.token);
             navigation("/", {
                 replace: true,
                 state: {},

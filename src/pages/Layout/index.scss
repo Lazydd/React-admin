@@ -103,8 +103,8 @@
             box-sizing: border-box;
             overflow-y: scroll;
             flex: 1;
-            padding: 20px 60px 100px;
-
+            padding: 20px;
+            background: #eee;
             &::-webkit-scrollbar {
                 width: 7px;
             }

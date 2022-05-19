@@ -1,12 +1,12 @@
 import React, { Fragment } from "react";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import global from "../utils/global";
 
 export default function AuthComponents({ children }: { children: any }) {
-    const isToken = global.getCookie("_Bearer_TOKEN_");
-    if (isToken) {
-        return <Fragment>{children}</Fragment>;
-    } else {
-        return <Navigate to="/login"></Navigate>;
-    }
+    // const isToken = global.getCookie("CXCSESSID");
+    // if (isToken) {
+    return <Fragment>{children}</Fragment>;
+    // } else {
+    //     return <Navigate to="/login"></Navigate>;
+    // }
 }
