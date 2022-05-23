@@ -31,3 +31,7 @@ export const login = () => {
 export const getMenuList = () => {
     return instance.get("/sys/menu/list");
 };
+
+export const addMenu = (data: Object) => {
+    return instance.post("/sys/menu/add", data);
+};
