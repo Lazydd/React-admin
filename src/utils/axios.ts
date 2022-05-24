@@ -1,6 +1,7 @@
 import axios from "axios";
 import qs from "qs";
 import global from "./global";
+import { message } from "antd";
 const instance = axios.create({
     // baseUrl: "http://",
     // timeout: 30000,
@@ -25,6 +26,8 @@ instance.interceptors.request.use((request: any) => {
             allowDots: true,
         });
     }
+    if (request.method === "get")
+        request.params = { ...request.params, time: new Date().getTime() };
     return request;
 });
 
@@ -32,13 +35,14 @@ instance.interceptors.response.use(
     (response: any) => {
         if (response.status >= 200 && response.status < 300) {
             if (response.data.code === 401) {
-                console.log("未登录");
+                message.error(response.data.error);
             } else {
                 return response.data;
             }
         }
     },
     (err: any) => {
+        message.error(err.message);
         throw new Error("网络错误");
     }
 );

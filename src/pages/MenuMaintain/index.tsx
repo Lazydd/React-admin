@@ -16,17 +16,18 @@ import type { ColumnsType } from "antd/lib/table";
 import type { RadioChangeEvent } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import "./index.scss";
-import { getMenuList, addMenu } from "../../api";
+import { getMenuList, addMenu, deleteMenu } from "../../api";
 
 export default function MenuMaintain() {
     const [loading, setLoading] = useState(true);
     const [menulist, setMenulist] = useState([]);
     const [visible, setVisible] = useState(false);
     const [value, setValue] = useState(1);
+    const [confirmLoading, setConfirmLoading] = useState(false);
 
     const [form] = Form.useForm();
     interface DataType {
-        key: React.Key;
+        id: string;
         sort: number;
         name: string;
         iconCls: string;
@@ -36,19 +37,20 @@ export default function MenuMaintain() {
         tags: Array<string>;
     }
     const onFinish = (values: any) => {
-        addMenu(values)
-            .then((res: any) => {
-                if (res.code === 200) {
-                    console.log(res);
-                    message.success("操作成功");
-                    setVisible(false);
-                } else {
-                    message.error(res.error);
-                }
-            })
-            .catch((err: any) => {
-                message.error(err);
-            });
+        console.log(values);
+        
+        setConfirmLoading(true);
+        addMenu(values).then((res: any) => {
+            if (res.code === 200) {
+                message.success("操作成功");
+                setVisible(false);
+                form.resetFields();
+                setConfirmLoading(false);
+            } else {
+                message.error(res.error);
+                setConfirmLoading(false);
+            }
+        });
     };
     const onChange = (e: RadioChangeEvent) => {
         setValue(e.target.value);
@@ -62,24 +64,33 @@ export default function MenuMaintain() {
         setVisible(false);
     };
 
-    const confirm = () => {
-        message.success("Click on Yes");
+    const confirm = (item: any) => {
+        deleteMenu(item.id).then((res: any) => {
+            if (res.code === 200) {
+                init();
+                message.success("删除成功");
+            } else {
+                message.error(res);
+            }
+        });
     };
 
-    const cancel = () => {
-        message.error("Click on No");
+    const edit = (item: any) => {
+        form.setFieldsValue({ ...item });
+        setVisible(true);
     };
+
     const init = () => {
-        getMenuList()
-            .then((res: any) => {
+        getMenuList().then((res: any) => {
+            if (res.code === 200) {
                 setMenulist(res.data);
-                setTimeout(() => {
-                    setLoading(false);
-                }, 1000);
-            })
-            .catch((err: any) => {
-                console.log(err);
-            });
+                setLoading(false);
+            } else {
+                console.log(11);
+
+                message.error(res.error);
+            }
+        });
     };
     useEffect(() => {
         setVisible(visible);
@@ -89,37 +100,33 @@ export default function MenuMaintain() {
     }, []);
     const columns: ColumnsType<DataType> = [
         {
+            title: "序号",
+            dataIndex: "sort",
+            width: 80,
+            fixed: "left",
+            sorter: (a, b) => a.sort - b.sort,
+        },
+        {
             title: "菜单名称",
             dataIndex: "name",
-            key: "name",
             fixed: "left",
             render: (text: any) => <a>{text}</a>,
         },
         {
-            title: "排序",
-            dataIndex: "sort",
-            key: "sort",
-            sorter: (a, b) => a.sort - b.sort,
-        },
-        {
             title: "图标",
             dataIndex: "iconCls",
-            key: "iconCls",
         },
         {
             title: "权限匹配路径",
             dataIndex: "url",
-            key: "url",
         },
         {
             title: "React路由地址",
             dataIndex: "path",
-            key: "path",
         },
         {
             title: "component",
             dataIndex: "component",
-            key: "component",
         },
         // {
         //     title: "标识",
@@ -143,26 +150,26 @@ export default function MenuMaintain() {
         // },
         {
             title: "操作",
-            key: "action",
             align: "center",
             fixed: "right",
             width: 140,
-            render: () => (
+            render: (item) => (
                 <div className="control-group">
                     <Button
                         type="primary"
                         size="small"
                         onClick={() => {
-                            setVisible(true);
+                            edit(item);
                         }}
                     >
                         编辑
                     </Button>
                     <Popconfirm
-                        title="Are you sure to delete this task?"
+                        title="确认删除？"
                         placement="left"
-                        onConfirm={confirm}
-                        onCancel={cancel}
+                        onConfirm={() => {
+                            confirm(item);
+                        }}
                         okText="确定"
                         cancelText="取消"
                     >
@@ -175,26 +182,6 @@ export default function MenuMaintain() {
         },
     ];
 
-    const data = [
-        {
-            key: "1",
-            name: "John Brown",
-            age: 32,
-            tags: ["nice", "developer"],
-        },
-        {
-            key: "2",
-            name: "Jim Green",
-            age: 42,
-            tags: ["loser"],
-        },
-        {
-            key: "3",
-            name: "Joe Black",
-            age: 32,
-            tags: ["#108ee9", "teacher"],
-        },
-    ];
     return (
         <>
             <Breadcrumb>
@@ -227,6 +214,7 @@ export default function MenuMaintain() {
                     columns={columns}
                     dataSource={menulist}
                     scroll={{ x: 1300 }}
+                    rowKey={(record) => record.id}
                 />
             </Card>
             <Modal
@@ -234,12 +222,15 @@ export default function MenuMaintain() {
                 visible={visible}
                 onOk={() => form.submit()}
                 onCancel={handleCancel}
+                confirmLoading={confirmLoading}
+                okText="确定"
+                cancelText="取消"
             >
                 <Form
                     {...layout}
                     form={form}
                     onFinish={onFinish}
-                    initialValues={{ nodeFlag: 1 }}
+                    // initialValues={{ nodeFlag: 1 }}
                 >
                     <Form.Item
                         name="nodeFlag"

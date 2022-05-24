@@ -15,39 +15,42 @@ export default function Login() {
     const navigation = useNavigate();
     const [verification, setVerification] = useState();
     // async写法
-    const onFinish = async (values: any) => {
-        try {
-            let res = await userLogin({
-                username: values.username,
-                password: values.password,
-                verification: values.verification,
-            });
-            // global.setCookie("CXCSESSID", res.data.token);
-            navigation("/", {
-                replace: true,
-                state: {},
-            });
-            message.success("登录成功");
-        } catch (e: any) {
-            message.error(e?.response?.data?.message);
-        }
+    // const onFinish = async (values: any) => {
+    //     try {
+    //         let res = await userLogin({
+    //             username: values.username,
+    //             password: values.password,
+    //             verification: values.verification,
+    //         });
 
-        // const onFinish = (values: any) => {
-        // userLogin({
-        //     mobile: values.username,
-        //     code: values.password,
-        // })
-        //     .then((res: any) => {
-        //         global.setCookie("_Bearer_TOKEN_", res.data.token);
-        //         navigation("/", {
-        //             replace: true,
-        //             state: {},
-        //         });
-        //         message.success("登录成功");
-        //     })
-        //     .catch((e: any) => {
-        //         message.error(e?.response?.data?.message);
-        //     });
+    //         // if (res.code === 200) {
+    //         //     // global.setCookie("CXCSESSID", res.data.token);
+    //         //     navigation("/", {
+    //         //         replace: true,
+    //         //         state: {},
+    //         //     });
+    //         //     message.success("登录成功");
+    //         // }
+    //     } catch (err: any) {
+    //         console.log(err);
+    //         message.error(err?.response?.data?.message);
+    //     }
+
+    const onFinish = (values: any) => {
+        userLogin({
+            username: values.username,
+            password: values.password,
+            verification: values.verification,
+        }).then((res: any) => {
+            if (res.code === 200) {
+                // global.setCookie("_Bearer_TOKEN_", res.data.token);
+                navigation("/", {
+                    replace: true,
+                    state: {},
+                });
+                message.success("登录成功");
+            }
+        });
 
         // loginStore.setToken({
         //     mobile: values.username,

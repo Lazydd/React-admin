@@ -8,6 +8,12 @@ import { instance } from "../utils/axios";
 //     });
 // };
 
+export const getWeather = () => {
+    return instance.get(
+        "https://restapi.amap.com/v3/weather/weatherInfo?city=110101&key=0b389e3ae69597e24385a2d9074852de"
+    );
+};
+
 export const userLogin = (data: object) => {
     return instance({
         url: "/login",
@@ -34,4 +40,8 @@ export const getMenuList = () => {
 
 export const addMenu = (data: Object) => {
     return instance.post("/sys/menu/add", data);
+};
+
+export const deleteMenu = (data: Array<string>) => {
+    return instance.delete("/sys/menu/del", { params: { ids: data } });
 };
