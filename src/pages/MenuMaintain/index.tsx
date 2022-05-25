@@ -37,20 +37,20 @@ export default function MenuMaintain() {
         tags: Array<string>;
     }
     const onFinish = (values: any) => {
-        console.log(values);
-        
         setConfirmLoading(true);
-        addMenu(values).then((res: any) => {
-            if (res.code === 200) {
-                message.success("操作成功");
-                setVisible(false);
-                form.resetFields();
-                setConfirmLoading(false);
-            } else {
-                message.error(res.error);
-                setConfirmLoading(false);
+        addMenu({ ...values, id: form.getFieldValue("id") }).then(
+            (res: any) => {
+                if (res.code === 200) {
+                    message.success("操作成功");
+                    setVisible(false);
+                    form.resetFields();
+                    setConfirmLoading(false);
+                } else {
+                    message.error(res.error);
+                    setConfirmLoading(false);
+                }
             }
-        });
+        );
     };
     const onChange = (e: RadioChangeEvent) => {
         setValue(e.target.value);
@@ -212,13 +212,13 @@ export default function MenuMaintain() {
                 <Table
                     className="menuMainTainTable"
                     columns={columns}
-                    dataSource={menulist}
+                    dataSource={menulist || []}
                     scroll={{ x: 1300 }}
                     rowKey={(record) => record.id}
                 />
             </Card>
             <Modal
-                title="Basic Modal"
+                title={form.getFieldValue("id") ? "编辑" : "新增"}
                 visible={visible}
                 onOk={() => form.submit()}
                 onCancel={handleCancel}
