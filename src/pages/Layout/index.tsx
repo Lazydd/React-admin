@@ -87,6 +87,8 @@ export default function Layout() {
                 setUserInfo(res.data);
             })
             .catch((err: any) => {
+                console.log(err);
+                
                 message.error(err);
             });
     }, []);

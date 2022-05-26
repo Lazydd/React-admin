@@ -2,10 +2,12 @@ import axios from "axios";
 import qs from "qs";
 import global from "./global";
 import { message } from "antd";
+let props = "";
 const instance = axios.create({
     // baseUrl: "http://",
     // timeout: 30000,
 });
+
 instance.interceptors.request.use((request: any) => {
     request.url = "/v1_0" + request.url;
     console.log(request.url);
@@ -35,7 +37,10 @@ instance.interceptors.response.use(
     (response: any) => {
         if (response.status >= 200 && response.status < 300) {
             if (response.data.code === 401) {
-                message.error(response.data.error);
+                setTimeout(() => {
+                    message.error(response.data.error);
+                    
+                }, 1000);
             } else {
                 return response.data;
             }

@@ -11,12 +11,13 @@ import {
     Form,
     Input,
     Radio,
+    Cascader,
 } from "antd";
 import type { ColumnsType } from "antd/lib/table";
 import type { RadioChangeEvent } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import "./index.scss";
-import { getMenuList, addMenu, deleteMenu } from "../../api";
+import { getMenuList, addMenu, deleteMenu, addMenuList } from "../../api";
 
 export default function MenuMaintain() {
     const [loading, setLoading] = useState(true);
@@ -36,24 +37,51 @@ export default function MenuMaintain() {
         component: string;
         tags: Array<string>;
     }
+
+    interface Option {
+        value: string;
+        label: string;
+        disabled?: boolean;
+        children?: Option[];
+    }
+
     const onFinish = (values: any) => {
         setConfirmLoading(true);
-        addMenu({ ...values, id: form.getFieldValue("id") }).then(
-            (res: any) => {
-                if (res.code === 200) {
-                    message.success("操作成功");
-                    setVisible(false);
-                    form.resetFields();
-                    setConfirmLoading(false);
-                } else {
-                    message.error(res.error);
-                    setConfirmLoading(false);
+        if (values.nodeFlag === 0) {
+            addMenu({ ...values, id: form.getFieldValue("id") }).then(
+                (res: any) => {
+                    if (res.code === 200) {
+                        message.success("操作成功");
+                        setVisible(false);
+                        form.resetFields();
+                        setConfirmLoading(false);
+                    } else {
+                        message.error(res.error);
+                        setConfirmLoading(false);
+                    }
                 }
-            }
-        );
+            );
+        } else {
+            addMenuList({ ...values, id: form.getFieldValue("id") }).then(
+                (res: any) => {
+                    if (res.code === 200) {
+                        message.success("操作成功");
+                        setVisible(false);
+                        form.resetFields();
+                        setConfirmLoading(false);
+                    } else {
+                        message.error(res.error);
+                        setConfirmLoading(false);
+                    }
+                }
+            );
+        }
     };
     const onChange = (e: RadioChangeEvent) => {
         setValue(e.target.value);
+    };
+    const onChangeCascader = (value: any) => {
+        console.log(value);
     };
     const layout = {
         labelCol: { span: 6 },
@@ -182,6 +210,41 @@ export default function MenuMaintain() {
         },
     ];
 
+    const options: Option[] = [
+        {
+            value: "zhejiang",
+            label: "Zhejiang",
+            children: [
+                {
+                    value: "hangzhou",
+                    label: "Hangzhou",
+                    children: [
+                        {
+                            value: "xihu",
+                            label: "West Lake",
+                        },
+                    ],
+                },
+            ],
+        },
+        {
+            value: "jiangsu",
+            label: "Jiangsu",
+            disabled: true,
+            children: [
+                {
+                    value: "nanjing",
+                    label: "Nanjing",
+                    children: [
+                        {
+                            value: "zhonghuamen",
+                            label: "Zhong Hua Men",
+                        },
+                    ],
+                },
+            ],
+        },
+    ];
     return (
         <>
             <Breadcrumb>
@@ -223,6 +286,7 @@ export default function MenuMaintain() {
                 onOk={() => form.submit()}
                 onCancel={handleCancel}
                 confirmLoading={confirmLoading}
+                forceRender
                 okText="确定"
                 cancelText="取消"
             >
@@ -230,7 +294,7 @@ export default function MenuMaintain() {
                     {...layout}
                     form={form}
                     onFinish={onFinish}
-                    // initialValues={{ nodeFlag: 1 }}
+                    initialValues={{ nodeFlag: 1 }}
                 >
                     <Form.Item
                         name="nodeFlag"
@@ -247,6 +311,21 @@ export default function MenuMaintain() {
                             <Radio value={0}>菜单</Radio>
                         </Radio.Group>
                     </Form.Item>
+                    {/* <Form.Item
+                        name="name"
+                        label="父级"
+                        rules={[
+                            {
+                                required: true,
+                                message: "请输入菜单名称",
+                            },
+                        ]}
+                    >
+                        <Cascader
+                            options={options}
+                            onChange={(e) => onChangeCascader(e)}
+                        />
+                    </Form.Item> */}
                     <Form.Item
                         name="name"
                         label="菜单名称"
@@ -259,6 +338,7 @@ export default function MenuMaintain() {
                     >
                         <Input placeholder="请输入菜单名称" />
                     </Form.Item>
+
                     <Form.Item
                         name="iconCls"
                         label="菜单图标"
@@ -271,33 +351,39 @@ export default function MenuMaintain() {
                     >
                         <Input placeholder="请输入菜单图标" />
                     </Form.Item>
-                    <Form.Item
-                        name="url"
-                        label="匹配路径"
-                        rules={[
-                            {
-                                required: true,
-                                message: "请输入权限匹配路径",
-                            },
-                        ]}
-                    >
-                        <Input placeholder="请输入权限匹配路径" />
-                    </Form.Item>
-                    <Form.Item
-                        name="path"
-                        label="路由地址"
-                        rules={[
-                            {
-                                required: true,
-                                message: "请输入路由地址",
-                            },
-                        ]}
-                    >
-                        <Input placeholder="请输入路由地址" />
-                    </Form.Item>
-                    <Form.Item name="component" label="component">
-                        <Input placeholder="请输入component" />
-                    </Form.Item>
+                    {value === 0 && (
+                        <Form.Item
+                            name="url"
+                            label="匹配路径"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "请输入权限匹配路径",
+                                },
+                            ]}
+                        >
+                            <Input placeholder="请输入权限匹配路径" />
+                        </Form.Item>
+                    )}
+                    {value === 0 && (
+                        <Form.Item
+                            name="path"
+                            label="路由地址"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "请输入路由地址",
+                                },
+                            ]}
+                        >
+                            <Input placeholder="请输入路由地址" />
+                        </Form.Item>
+                    )}
+                    {value === 0 && (
+                        <Form.Item name="component" label="component">
+                            <Input placeholder="请输入component" />
+                        </Form.Item>
+                    )}
                 </Form>
             </Modal>
         </>

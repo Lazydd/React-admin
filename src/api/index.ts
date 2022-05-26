@@ -42,6 +42,10 @@ export const addMenu = (data: Object) => {
     return instance.post("/sys/menu/add", data);
 };
 
+export const addMenuList = (data: Object) => {
+    return instance.post("/sys/menu/add/menuNode", data);
+};
+
 export const deleteMenu = (data: Array<string>) => {
     return instance.delete("/sys/menu/del", { params: { ids: data } });
 };
