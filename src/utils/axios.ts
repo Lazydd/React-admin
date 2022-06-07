@@ -12,10 +12,10 @@ instance.interceptors.request.use((request: any) => {
     request.url = "/v1_0" + request.url;
     console.log(request.url);
 
-    // if (global.getCookie("CXCSESSID")) {
-    //     request.headers["Authorization"] =
-    //         "CXCSESSID" + `${global.getCookie("CXCSESSID")}`;
-    // }
+    if (global.getCookie("_Bearer_TOKEN_")) {
+        request.headers["Authorization"] =
+            "Bearer " + `${global.getCookie("_Bearer_TOKEN_")}`;
+    }
 
     if (
         request.data &&
@@ -39,7 +39,6 @@ instance.interceptors.response.use(
             if (response.data.code === 401) {
                 setTimeout(() => {
                     message.error(response.data.error);
-                    
                 }, 1000);
             } else {
                 return response.data;

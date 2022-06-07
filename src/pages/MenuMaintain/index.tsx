@@ -80,9 +80,6 @@ export default function MenuMaintain() {
     const onChange = (e: RadioChangeEvent) => {
         setValue(e.target.value);
     };
-    const onChangeCascader = (value: any) => {
-        console.log(value);
-    };
     const layout = {
         labelCol: { span: 6 },
         wrapperCol: { span: 15 },
@@ -311,21 +308,6 @@ export default function MenuMaintain() {
                             <Radio value={0}>菜单</Radio>
                         </Radio.Group>
                     </Form.Item>
-                    {/* <Form.Item
-                        name="name"
-                        label="父级"
-                        rules={[
-                            {
-                                required: true,
-                                message: "请输入菜单名称",
-                            },
-                        ]}
-                    >
-                        <Cascader
-                            options={options}
-                            onChange={(e) => onChangeCascader(e)}
-                        />
-                    </Form.Item> */}
                     <Form.Item
                         name="name"
                         label="菜单名称"

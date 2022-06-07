@@ -37,22 +37,15 @@ export default function Layout() {
     const items = [
         { label: "首页", key: "/", icon: <SettingOutlined /> }, // 菜单项务必填写 key
         {
-            label: "文章管理",
-            key: "sub1",
+            label: "内容管理",
+            key: "/arcticle",
             icon: <SettingOutlined />,
-            children: [
-                {
-                    label: "文章管理",
-                    key: "/publish2",
-                    icon: <SettingOutlined />,
-                },
-            ],
         },
         {
             label: "网址管理",
             key: "sub2",
             icon: <SettingOutlined />,
-            children: [{ label: "网址管理", key: "/publish" }],
+            children: [{ label: "网址管理", key: "/publish2" }],
         },
         {
             label: "系统维护",
@@ -88,7 +81,7 @@ export default function Layout() {
             })
             .catch((err: any) => {
                 console.log(err);
-                
+
                 message.error(err);
             });
     }, []);
@@ -135,7 +128,7 @@ export default function Layout() {
                                 }}
                                 size="large"
                             >
-                                {userInfo.username}
+                                {userInfo.name}
                             </Avatar>
                         </Space>
                     </a>

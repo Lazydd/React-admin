@@ -8,23 +8,21 @@ import {
 } from "@ant-design/icons";
 import "./index.scss";
 import global from "../../utils/global";
-import { userLogin, login } from "../../api/index";
+import { userLogin } from "../../api/index";
 // import { useStore } from "../../store";
 export default function Login() {
     // const { loginStore } = useStore();
     const navigation = useNavigate();
-    const [verification, setVerification] = useState();
     // async写法
     // const onFinish = async (values: any) => {
     //     try {
     //         let res = await userLogin({
-    //             username: values.username,
-    //             password: values.password,
-    //             verification: values.verification,
+    //             mobile: values.username,
+    //             code: values.password,
     //         });
 
     //         // if (res.code === 200) {
-    //         //     // global.setCookie("CXCSESSID", res.data.token);
+    //         //     // global.setCookie("_Bearer_TOKEN_", res.data.token);
     //         //     navigation("/", {
     //         //         replace: true,
     //         //         state: {},
@@ -38,18 +36,15 @@ export default function Login() {
 
     const onFinish = (values: any) => {
         userLogin({
-            username: values.username,
-            password: values.password,
-            verification: values.verification,
+            mobile: values.username,
+            code: values.password,
         }).then((res: any) => {
-            if (res.code === 200) {
-                // global.setCookie("_Bearer_TOKEN_", res.data.token);
-                navigation("/", {
-                    replace: true,
-                    state: {},
-                });
-                message.success("登录成功");
-            }
+            global.setCookie("_Bearer_TOKEN_", res.data.token);
+            navigation("/", {
+                replace: true,
+                state: {},
+            });
+            message.success("登录成功");
         });
 
         // loginStore.setToken({
@@ -57,23 +52,6 @@ export default function Login() {
         //     code: values.password,
         // });
     };
-
-    function getCode() {
-        login()
-            .then((res: any) => {
-                const myBlob = new Blob([res], {
-                    type: "image/jpeg",
-                });
-                const url: any = window.URL.createObjectURL(myBlob);
-                setVerification(url);
-            })
-            .catch((err) => {
-                message.error(err);
-            });
-    }
-    useEffect(() => {
-        getCode();
-    }, []);
     return (
         <section className="login">
             <div className="box">
@@ -84,10 +62,8 @@ export default function Login() {
                         className="login-form"
                         initialValues={{
                             remember: true,
-                            // username: 13811111111,
-                            username: "admin",
-                            // password: 246810,
-                            password: "admin",
+                            username: 13811111111,
+                            password: 246810,
                         }}
                         onFinish={onFinish}
                         validateTrigger={["onBlur", "onChange"]}
@@ -121,31 +97,6 @@ export default function Login() {
                                 placeholder="Password"
                             />
                         </Form.Item>
-                        <div className="verification-box">
-                            <Form.Item
-                                name="verification"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message:
-                                            "Please input your Verification!",
-                                    },
-                                ]}
-                            >
-                                <Input
-                                    className="verification"
-                                    prefix={<VerifiedOutlined />}
-                                    placeholder="Verification"
-                                />
-                            </Form.Item>
-                            {/* <img src="/v1_0/login/code" alt="" /> */}
-                            <img
-                                className="verificationImg"
-                                src={verification}
-                                alt=""
-                                onClick={getCode}
-                            />
-                        </div>
                         <Form.Item>
                             <Form.Item
                                 name="remember"
@@ -154,7 +105,6 @@ export default function Login() {
                             >
                                 <Checkbox>Remember me</Checkbox>
                             </Form.Item>
-
                             <a className="login-form-forgot" href="">
                                 Forgot password
                             </a>
