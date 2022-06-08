@@ -26,8 +26,12 @@ export const getUserInfo = () => {
     return instance.get("/user/profile");
 };
 
-export const getCticle = () => {
-    return instance.get("/user/profile");
+export const getArticle = () => {
+    return instance.get("/channels");
+};
+
+export const getArticleTableData = (params: Object) => {
+    return instance.get("/mp/articles", { params });
 };
 
 export const getMenuList = () => {
