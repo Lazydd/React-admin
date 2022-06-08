@@ -26,6 +26,10 @@ export const getUserInfo = () => {
     return instance.get("/user/profile");
 };
 
+export const getCticle = () => {
+    return instance.get("/user/profile");
+};
+
 export const getMenuList = () => {
     return instance.get("/sys/menu/list");
 };
