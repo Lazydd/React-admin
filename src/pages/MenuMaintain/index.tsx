@@ -291,7 +291,6 @@ export default function MenuMaintain() {
                     {...layout}
                     form={form}
                     onFinish={onFinish}
-                    initialValues={{ nodeFlag: 1 }}
                 >
                     <Form.Item
                         name="nodeFlag"

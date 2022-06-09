@@ -8,11 +8,19 @@ import {
     Button,
     Table,
     Popconfirm,
+    Tag,
+    Space,
+    Form,
 } from "antd";
 import moment from "moment";
 import type { ColumnsType } from "antd/lib/table";
+import locale from "antd/lib/locale/zh_CN";
 import "./index.scss";
-import { SearchOutlined } from "@ant-design/icons";
+import {
+    SearchOutlined,
+    EditOutlined,
+    DeleteOutlined,
+} from "@ant-design/icons";
 
 import { getArticle, getArticleTableData } from "../../api";
 export default function Article() {
@@ -22,7 +30,10 @@ export default function Article() {
         list: [],
         count: 0,
     });
-    const [params, setParams] = useState({ page: 1, per_page: 10 });
+    const [params, setParams] = useState({
+        page: 1,
+        per_page: 10,
+    });
 
     const { Option } = Select;
     const { RangePicker } = DatePicker;
@@ -30,10 +41,10 @@ export default function Article() {
     interface DataType {
         id: string;
         sort: number;
+        cover: string;
         title: string;
-        iconCls: string;
+        status: string;
         pubdate: string;
-        url: string;
         read_count: string;
         like_count: string;
         tags: Array<string>;
@@ -47,18 +58,25 @@ export default function Article() {
             sorter: (a, b) => a.sort - b.sort,
         },
         {
+            title: "封面",
+            dataIndex: "cover",
+            width: 200,
+            fixed: "left",
+            render: (text: any) => (
+                <img src={text.images[0]} width={200} height={150} />
+            ),
+        },
+        {
             title: "标题",
             dataIndex: "title",
+            width: 200,
             fixed: "left",
             render: (text: any) => <a>{text}</a>,
         },
         {
             title: "状态",
-            dataIndex: "iconCls",
-        },
-        {
-            title: "权限匹配路径",
-            dataIndex: "url",
+            dataIndex: "status",
+            render: (text: any) => <Tag color="green">审核通过</Tag>,
         },
         {
             title: "发布时间",
@@ -77,26 +95,6 @@ export default function Article() {
             title: "点赞数",
             dataIndex: "like_count",
         },
-        // {
-        //     title: "标识",
-        //     key: "tags",
-        //     dataIndex: "tags",
-        //     render: (tags: any) => (
-        //         <>
-        //             {tags.map((tag: any) => {
-        //                 let color = tag.length > 5 ? "geekblue" : "green";
-        //                 if (tag === "loser") {
-        //                     color = "volcano";
-        //                 }
-        //                 return (
-        //                     <Tag color="#108ee9" key={tag}>
-        //                         {tag.toUpperCase()}
-        //                     </Tag>
-        //                 );
-        //             })}
-        //         </>
-        //     ),
-        // },
         {
             title: "操作",
             align: "center",
@@ -104,28 +102,32 @@ export default function Article() {
             width: 140,
             render: (item) => (
                 <div className="control-group">
-                    <Button
-                        type="primary"
-                        size="small"
-                        onClick={() => {
-                            edit(item);
-                        }}
-                    >
-                        编辑
-                    </Button>
-                    <Popconfirm
-                        title="确认删除？"
-                        placement="left"
-                        onConfirm={() => {
-                            confirm(item);
-                        }}
-                        okText="确定"
-                        cancelText="取消"
-                    >
-                        <Button type="primary" danger size="small">
-                            删除
-                        </Button>
-                    </Popconfirm>
+                    <Space size="middle">
+                        <Button
+                            type="primary"
+                            shape="circle"
+                            icon={<EditOutlined />}
+                            onClick={() => {
+                                edit(item);
+                            }}
+                        ></Button>
+                        <Popconfirm
+                            title="确认删除？"
+                            placement="left"
+                            onConfirm={() => {
+                                confirm(item);
+                            }}
+                            okText="确定"
+                            cancelText="取消"
+                        >
+                            <Button
+                                type="primary"
+                                danger
+                                shape="circle"
+                                icon={<DeleteOutlined />}
+                            ></Button>
+                        </Popconfirm>
+                    </Space>
                 </div>
             ),
         },
@@ -140,6 +142,36 @@ export default function Article() {
     };
 
     const edit = (e: any) => {};
+
+    const onFinish = (e: any) => {
+        const _params = {
+            status: null,
+            channel_id: null,
+            begin_pubdate: null,
+            end_pubdate: null,
+        };
+        const { status, channel_id, date } = e;
+        if (status !== -1) {
+            _params.status = status;
+        }
+        if (channel_id) {
+            _params.channel_id = channel_id;
+        }
+        if (date) {
+            const [begin_pubdate, end_pubdate] = date;
+            _params.begin_pubdate = begin_pubdate.format("YYYY-MM-DD");
+            _params.end_pubdate = end_pubdate.format("YYYY-MM-DD");
+        }
+        setParams({ ..._params, ...params, page: 1 });
+    };
+
+    const pageChange = (page: number) => {
+        setParams({ ...params, page });
+    };
+
+    const statusChange = (e: any) => {
+        // setParams({ status: e.target.value });
+    };
 
     const confirm = (item: any) => {
         // deleteMenu(item.id).then((res: any) => {
@@ -189,47 +221,57 @@ export default function Article() {
                 style={{ width: "100%", marginTop: 20, overflow: "hidden" }}
                 loading={loading}
             >
-                <div className="control">
-                    <span style={{ marginRight: 20 }}>状态：</span>
-                    <Radio.Group defaultValue="a" buttonStyle="solid">
-                        <Radio.Button value="a">全部</Radio.Button>
-                        <Radio.Button value="b">草稿</Radio.Button>
-                        <Radio.Button value="c">待审核</Radio.Button>
-                        <Radio.Button value="d">审核失败</Radio.Button>
-                    </Radio.Group>
-                    <Button type="primary" icon={<SearchOutlined />}>
+                <Form onFinish={onFinish}>
+                    <Form.Item label="状态" name="status">
+                        <Radio.Group
+                            defaultValue={-1}
+                            buttonStyle="solid"
+                            onChange={statusChange}
+                        >
+                            <Radio.Button value={-1}>全部</Radio.Button>
+                            <Radio.Button value={0}>草稿</Radio.Button>
+                            <Radio.Button value={1}>待审核</Radio.Button>
+                            <Radio.Button value={2}>审核通过</Radio.Button>
+                            <Radio.Button value={3}>审核失败</Radio.Button>
+                        </Radio.Group>
+                    </Form.Item>
+                    <Button
+                        type="primary"
+                        className="control"
+                        icon={<SearchOutlined />}
+                        htmlType="submit"
+                    >
                         筛选
                     </Button>
-                </div>
-                <div className="control">
-                    <span style={{ marginRight: 20 }}>频道：</span>
-                    <Select
-                        placeholder="请选择频道"
-                        style={{ width: 120 }}
-                        onChange={handleChange}
-                    >
-                        {optionlist.map((item: any) => (
-                            <Option value={item.id} key={item.id}>
-                                {item.name}
-                            </Option>
-                        ))}
-                    </Select>
-                </div>
-                <div className="control">
-                    <span style={{ marginRight: 20 }}>日期：</span>
-                    <RangePicker
-                        defaultValue={[
-                            moment("2015/01/01", dateFormat),
-                            moment("2015/01/01", dateFormat),
-                        ]}
-                        onChange={rangePickerChange}
-                    />
-                </div>
+                    <Form.Item label="频道" name="channel_id">
+                        <Select
+                            placeholder="请选择频道"
+                            style={{ width: 120 }}
+                            onChange={handleChange}
+                        >
+                            {optionlist.map((item: any) => (
+                                <Option value={item.id} key={item.id}>
+                                    {item.name}
+                                </Option>
+                            ))}
+                        </Select>
+                    </Form.Item>
+                    <Form.Item label="日期" name="date">
+                        <RangePicker onChange={rangePickerChange} />
+                    </Form.Item>
+                </Form>
+                <p>根据筛选条件共查询到{articleTableData.count}条结果</p>
                 <Table
                     className="menuMainTainTable"
                     columns={columns}
                     dataSource={articleTableData.list || []}
                     scroll={{ x: 1300 }}
+                    pagination={{
+                        pageSize: params.per_page,
+                        current: params.page,
+                        onChange: pageChange,
+                        total: articleTableData.count,
+                    }}
                     rowKey={(record) => record.id}
                 />
             </Card>
