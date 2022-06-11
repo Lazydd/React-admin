@@ -48,6 +48,12 @@
                 }
             }
         }
+        .weather {
+            position: absolute;
+            left: 140px;
+            color: #fff;
+            transition: left 0.3s cubic-bezier(0.2, 0, 0, 1) 0s;
+        }
     }
     .page {
         display: flex;
@@ -123,6 +129,9 @@
     }
     .Layout header .ant-dropdown-trigger {
         right: 25px;
+    }
+    .Layout header .weather {
+        left: 85px;
     }
     .Layout header {
         padding: 0 50px;

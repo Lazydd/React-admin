@@ -8,19 +8,16 @@ export const userLogin = (data: object) => {
     });
 };
 
-export const getWeather = () => {
+export const getWeather = (city: string) => {
     return instance.get(
-        "https://restapi.amap.com/v3/weather/weatherInfo?city=110101&key=0b389e3ae69597e24385a2d9074852de"
+        "/map/weather/weatherInfo?key=6d78e0a70cbe6fc669f1a0705a85a5b5&city=" +
+            city
     );
 };
 
-// export const userLogin = (data: object) => {
-//     return instance({
-//         url: "/login",
-//         method: "POST",
-//         data,
-//     });
-// };
+export const getLocalPosition = () => {
+    return instance.get("/map/ip?key=6d78e0a70cbe6fc669f1a0705a85a5b5");
+};
 
 export const getUserInfo = () => {
     return instance.get("/user/profile");
@@ -34,18 +31,22 @@ export const getArticleTableData = (params: Object) => {
     return instance.get("/mp/articles", { params });
 };
 
-export const getMenuList = () => {
-    return instance.get("/sys/menu/list");
+export const deleteArticle = (params: any) => {
+    return instance.delete("/mp/articles/" + params.id);
 };
 
-export const addMenu = (data: Object) => {
-    return instance.post("/sys/menu/add", data);
+export const saveArticle = (params: any) => {
+    return instance.post("/mp/articles?draft=false", params, {
+        headers: { "Content-Type": "application/json" },
+    });
 };
 
-export const addMenuList = (data: Object) => {
-    return instance.post("/sys/menu/add/menuNode", data);
+export const editSaveArticle = (params: any, id: string) => {
+    return instance.put(`/mp/articles/${id}?draft=false`, params, {
+        headers: { "Content-Type": "application/json" },
+    });
 };
 
-export const deleteMenu = (data: Array<string>) => {
-    return instance.delete("/sys/menu/del", { params: { ids: data } });
+export const getArticleDetails = (id: string) => {
+    return instance.get("/mp/articles/" + id);
 };

@@ -1,57 +1,36 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Outlet, useLocation } from "react-router-dom";
 import global from "../../utils/global";
-import { getUserInfo } from "../../api/index";
+import { getUserInfo, getWeather, getLocalPosition } from "../../api";
 import "./index.scss";
-import {
-    Menu,
-    MenuProps,
-    Avatar,
-    Dropdown,
-    Space,
-    message,
-    Button,
-} from "antd";
+import { Menu, Avatar, Dropdown, Space, message, Button } from "antd";
 import {
     RedditOutlined,
-    SettingOutlined,
     MenuUnfoldOutlined,
     MenuFoldOutlined,
+    HomeOutlined,
+    DiffOutlined,
+    EditOutlined,
 } from "@ant-design/icons";
 export default function Layout() {
     const navigation = useNavigate();
     const { pathname } = useLocation();
 
-    const rootSubmenuKeys = ["/", "sub1", "sub2", "sub3"];
-    const [openKeys, setOpenKeys] = useState(["sub3"]);
+    const [weather, setWeather] = useState({ temperature: "", weather: "" });
+    const [openKeys, setOpenKeys] = useState(["/"]);
     const [userInfo, setUserInfo] = useState({} as any);
-    const onOpenChange: MenuProps["onOpenChange"] = (keys) => {
-        const latestOpenKey = keys.find((key) => openKeys.indexOf(key) === -1);
-        if (rootSubmenuKeys.indexOf(latestOpenKey!) === -1) {
-            setOpenKeys(keys);
-        } else {
-            setOpenKeys(latestOpenKey ? [latestOpenKey] : []);
-        }
-    };
 
     const items = [
-        { label: "首页", key: "/", icon: <SettingOutlined /> }, // 菜单项务必填写 key
+        { label: "首页", key: "/", icon: <HomeOutlined /> }, // 菜单项务必填写 key
         {
             label: "内容管理",
             key: "/arcticle",
-            icon: <SettingOutlined />,
+            icon: <DiffOutlined />,
         },
         {
-            label: "网址管理",
-            key: "sub2",
-            icon: <SettingOutlined />,
-            children: [{ label: "网址管理", key: "/publish2" }],
-        },
-        {
-            label: "系统维护",
-            key: "sub3",
-            icon: <SettingOutlined />,
-            children: [{ label: "菜单管理", key: "/menuMaintain" }],
+            label: "发布文章",
+            key: "/publish",
+            icon: <EditOutlined />,
         },
     ];
     function exitClick() {
@@ -74,31 +53,24 @@ export default function Layout() {
         setCollapsed(!collapsed);
     };
     useEffect(() => {
+        getLocalPosition().then((res: any) => {
+            if (res.adcode) {
+                getWeather(res.adcode).then((res: any) => {
+                    setWeather(res.lives[0]);
+                });
+            }
+        });
         getUserInfo()
             .then((res: any) => {
-                console.log(res.data);
                 setUserInfo(res.data);
             })
             .catch((err: any) => {
-                console.log(err);
-
                 message.error(err);
             });
     }, []);
-    // function getScrollY() {
-    //     if (window.scrollY > 0) {
-    //         setStick(true);
-    //     } else {
-    //         setStick(false);
-    //     }
-    // }
-    // const [stick, setStick] = useState(false);
-    // useEffect(() => {
-    //     window.addEventListener("scroll", getScrollY);
-    //     return () => {
-    //         window.removeEventListener("scroll", getScrollY);
-    //     };
-    // }, [stick]);
+    useEffect(() => {
+        setOpenKeys([pathname]);
+    }, [pathname]);
     const menu = (
         <Menu
             theme="dark"
@@ -110,6 +82,9 @@ export default function Layout() {
         <div className="Layout">
             <header>
                 <RedditOutlined />
+                <div className="weather">
+                    天气：{weather.temperature}℃ {weather.weather}
+                </div>
                 <ul>
                     <li className="navList" onClick={() => TopListChange("/")}>
                         首页
@@ -117,7 +92,6 @@ export default function Layout() {
                     <li className="navList">指南</li>
                     <li className="navList">组件</li>
                 </ul>
-
                 <Dropdown overlay={menu}>
                     <a onClick={(e) => e.preventDefault()}>
                         <Space>
@@ -141,15 +115,14 @@ export default function Layout() {
                 >
                     <div className="menu">
                         <Menu
+                            className="menuList"
                             theme="dark"
                             mode="inline"
-                            openKeys={openKeys}
-                            onOpenChange={onOpenChange}
+                            selectedKeys={openKeys}
                             items={items}
                             inlineCollapsed={collapsed}
                             onSelect={onSelect}
-                            className="menuList"
-                            defaultSelectedKeys={[pathname]}
+                            defaultSelectedKeys={openKeys}
                         />
                     </div>
                     <Button

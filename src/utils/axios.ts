@@ -9,8 +9,7 @@ const instance = axios.create({
 });
 
 instance.interceptors.request.use((request: any) => {
-    request.url = "/v1_0" + request.url;
-    console.log(request.url);
+    if (!request.url.includes("/map/")) request.url = "/v1_0" + request.url;
 
     if (global.getCookie("_Bearer_TOKEN_")) {
         request.headers["Authorization"] =
@@ -20,6 +19,7 @@ instance.interceptors.request.use((request: any) => {
     if (
         request.data &&
         request.headers["Content-Type"] !== "multiple/form-data" &&
+        request.headers["Content-Type"] !== "application/json" &&
         (request.headers["Content-Type"] ===
             "application/x-www-form-urlencoded" ||
             request.method === "post")
