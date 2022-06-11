@@ -7,10 +7,9 @@ module.exports = function (app) {
             changeOrigin: true,
             // pathRewrite: { "^/v1_0": "" },
         }),
-        createProxyMiddleware("/map", {
-            target: "https://restapi.amap.com/v3",
+        createProxyMiddleware("/v3", {
+            target: "https://restapi.amap.com",
             changeOrigin: true,
-            pathRewrite: { "^/map": "" },
         }),
     );
 };

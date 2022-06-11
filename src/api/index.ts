@@ -10,13 +10,13 @@ export const userLogin = (data: object) => {
 
 export const getWeather = (city: string) => {
     return instance.get(
-        "/map/weather/weatherInfo?key=6d78e0a70cbe6fc669f1a0705a85a5b5&city=" +
+        "/v3/weather/weatherInfo?key=6d78e0a70cbe6fc669f1a0705a85a5b5&city=" +
             city
     );
 };
 
 export const getLocalPosition = () => {
-    return instance.get("/map/ip?key=6d78e0a70cbe6fc669f1a0705a85a5b5");
+    return instance.get("/v3/ip?key=6d78e0a70cbe6fc669f1a0705a85a5b5");
 };
 
 export const getUserInfo = () => {

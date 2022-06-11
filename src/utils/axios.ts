@@ -9,7 +9,7 @@ const instance = axios.create({
 });
 
 instance.interceptors.request.use((request: any) => {
-    if (!request.url.includes("/map/")) request.url = "/v1_0" + request.url;
+    if (!request.url.includes("/v3/")) request.url = "/v1_0" + request.url;
 
     if (global.getCookie("_Bearer_TOKEN_")) {
         request.headers["Authorization"] =
