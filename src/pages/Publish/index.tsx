@@ -11,11 +11,14 @@ import {
     message,
     Upload,
 } from "antd";
+import ImgCrop from "antd-img-crop";
 
 import { PlusOutlined } from "@ant-design/icons";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "./index.scss";
+
+import SeleteType from "../../components/SeleteType";
 import {
     getArticle,
     saveArticle,
@@ -167,20 +170,22 @@ export default function Publish() {
                             name="fileList"
                             // rules={[{ required: true, message: "请选择封面" }]}
                         >
-                            <Upload
-                                action="http://geek.itheima.net/v1_0/upload"
-                                listType="picture-card"
-                                name="image"
-                                showUploadList
-                                fileList={fileList}
-                                onChange={handleChange}
-                                multiple={imageCount > 1}
-                                maxCount={imageCount}
-                            >
-                                <div style={{ marginTop: 8 }}>
-                                    <PlusOutlined />
-                                </div>
-                            </Upload>
+                            <ImgCrop rotate grid modalTitle="裁剪图片">
+                                <Upload
+                                    action="http://geek.itheima.net/v1_0/upload"
+                                    listType="picture-card"
+                                    name="image"
+                                    showUploadList
+                                    fileList={fileList}
+                                    onChange={handleChange}
+                                    multiple={imageCount > 1}
+                                    maxCount={imageCount}
+                                >
+                                    <div style={{ marginTop: 8 }}>
+                                        <PlusOutlined />
+                                    </div>
+                                </Upload>
+                            </ImgCrop>
                         </Form.Item>
                     )}
                     <Form.Item
@@ -193,7 +198,7 @@ export default function Publish() {
                             placeholder="请输入文章内容..."
                         />
                     </Form.Item>
-                    <Button type="primary" htmlType="submit">
+                    <Button className="submit" type="primary" htmlType="submit">
                         提交
                     </Button>
                 </Form>

@@ -4,7 +4,6 @@ import {
     Breadcrumb,
     Card,
     Radio,
-    Select,
     DatePicker,
     Button,
     Table,
@@ -15,9 +14,9 @@ import {
     Image,
     message,
 } from "antd";
-import moment from "moment";
+
 import type { ColumnsType } from "antd/lib/table";
-import locale from "antd/lib/locale/zh_CN";
+
 import "./index.scss";
 import {
     SearchOutlined,
@@ -25,11 +24,12 @@ import {
     DeleteOutlined,
 } from "@ant-design/icons";
 
-import { getArticle, getArticleTableData, deleteArticle } from "../../api";
+import SeleteType from "../../components/SeleteType";
+
+import { getArticleTableData, deleteArticle } from "../../api";
 export default function Article() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
-    const [optionlist, setOptionlist] = useState([]);
     const [articleTableData, setAticleTableData] = useState({
         list: [],
         count: 0,
@@ -39,7 +39,6 @@ export default function Article() {
         per_page: 10,
     });
 
-    const dateFormat = "YYYY/MM/DD";
     interface DataType {
         id: string;
         index: number;
@@ -75,20 +74,7 @@ export default function Article() {
             title: "封面",
             dataIndex: "cover",
             width: 200,
-            render: (text: any) => (
-                // <Image.PreviewGroup>
-                //     {text.images.map((item: any, i: number) => (
-                //         <Image
-                //             key={item}
-                //             width={200}
-                //             height={150}
-                //             src={item}
-                //             style={{ display: i !== 0 ? "none" : "" }}
-                //         ></Image>
-                //     ))}
-                // </Image.PreviewGroup>
-                <Image width={200} height={150} src={text.images[0]} />
-            ),
+            render: (text: any) => <Image height={150} src={text.images[0]} />,
         },
         {
             title: "状态",
@@ -195,13 +181,6 @@ export default function Article() {
         });
     };
 
-    const init = () => {
-        getArticle().then((res) => {
-            setOptionlist(res.data?.channels);
-            setLoading(false);
-        });
-    };
-
     const getData = async () => {
         const res = await getArticleTableData(params);
         const { results, total_count } = res.data;
@@ -209,13 +188,11 @@ export default function Article() {
             list: results,
             count: total_count,
         });
+        setLoading(false);
     };
 
     useEffect(() => {
-        init();
-    }, []);
-
-    useEffect(() => {
+        setLoading(true);
         getData();
     }, [params]);
     return (
@@ -228,10 +205,7 @@ export default function Article() {
                     <a href="">内容管理</a>
                 </Breadcrumb.Item>
             </Breadcrumb>
-            <Card
-                style={{ width: "100%", marginTop: 20, overflow: "hidden" }}
-                loading={loading}
-            >
+            <Card style={{ width: "100%", marginTop: 20, overflow: "hidden" }}>
                 <Form onFinish={onFinish}>
                     <Form.Item label="状态" name="status" initialValue={-1}>
                         <Radio.Group buttonStyle="solid">
@@ -242,6 +216,13 @@ export default function Article() {
                             <Radio.Button value={3}>审核失败</Radio.Button>
                         </Radio.Group>
                     </Form.Item>
+
+                    <Form.Item label="频道" name="channel_id">
+                        <SeleteType />
+                    </Form.Item>
+                    <Form.Item label="日期" name="date">
+                        <DatePicker.RangePicker />
+                    </Form.Item>
                     <Button
                         type="primary"
                         className="control"
@@ -250,19 +231,12 @@ export default function Article() {
                     >
                         筛选
                     </Button>
-                    <Form.Item label="频道" name="channel_id">
-                        <Select placeholder="请选择频道" style={{ width: 120 }}>
-                            {optionlist.map((item: any) => (
-                                <Select.Option value={item.id} key={item.id}>
-                                    {item.name}
-                                </Select.Option>
-                            ))}
-                        </Select>
-                    </Form.Item>
-                    <Form.Item label="日期" name="date">
-                        <DatePicker.RangePicker />
-                    </Form.Item>
                 </Form>
+            </Card>
+            <Card
+                style={{ width: "100%", marginTop: 20, overflow: "hidden" }}
+                loading={loading}
+            >
                 <p>根据筛选条件共查询到{articleTableData.count}条结果</p>
                 <Table
                     className="menuMainTainTable"
