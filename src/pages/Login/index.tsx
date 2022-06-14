@@ -8,7 +8,7 @@ import {
 } from "@ant-design/icons";
 import "./index.scss";
 import global from "../../utils/global";
-import { userLogin } from "../../api/index";
+import { userLogin, getUserInfo } from "../../api/index";
 // import { useStore } from "../../store";
 export default function Login() {
     // const { loginStore } = useStore();
@@ -36,10 +36,11 @@ export default function Login() {
 
     const onFinish = (values: any) => {
         userLogin({
-            mobile: values.username,
-            code: values.password,
+            username: values.username,
+            password: values.password,
         }).then((res: any) => {
-            global.setCookie("_Bearer_TOKEN_", res.data.token);
+            let { tokenName, tokenValue } = res.data;
+            global.setCookie(tokenName, tokenValue);
             navigation("/", {
                 replace: true,
                 state: {},
@@ -62,8 +63,8 @@ export default function Login() {
                         className="login-form"
                         initialValues={{
                             remember: true,
-                            username: 13811111111,
-                            password: 246810,
+                            username: "admin",
+                            password: "admin",
                         }}
                         onFinish={onFinish}
                         validateTrigger={["onBlur", "onChange"]}

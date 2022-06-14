@@ -2,7 +2,7 @@ import { instance } from "../utils/axios";
 
 export const userLogin = (data: object) => {
     return instance({
-        url: "/authorizations",
+        url: "/login/doLogin",
         method: "POST",
         data,
     });
@@ -20,7 +20,7 @@ export const getLocalPosition = () => {
 };
 
 export const getUserInfo = () => {
-    return instance.get("/user/profile");
+    return instance.get("/login/getTokenInfo");
 };
 
 export const getArticle = () => {
