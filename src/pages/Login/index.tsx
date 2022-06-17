@@ -40,7 +40,8 @@ export default function Login() {
             password: values.password,
         }).then((res: any) => {
             let { tokenName, tokenValue } = res.data;
-            global.setCookie(tokenName, tokenValue);
+            global.setStorage("tokenName", tokenName);
+            global.setStorage("tokenValue", tokenValue);
             navigation("/", {
                 replace: true,
                 state: {},

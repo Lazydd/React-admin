@@ -36,6 +36,18 @@ const global = {
             this.setCookie(key, data, -1);
         }
     },
+
+    getStorage(key: string) {
+        return localStorage.getItem(key);
+    },
+
+    setStorage(key: string, value: any) {
+        return localStorage.setItem(key, value);
+    },
+
+    delStorage(key: string) {
+        localStorage.removeItem(key);
+    },
 };
 
 export default global;
