@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Outlet, useLocation } from "react-router-dom";
 import global from "../../utils/global";
-import { getUserInfo, getWeather, getLocalPosition } from "../../api";
+import { getWeather, getLocalPosition, getUserInfo } from "../../api";
 import "./index.scss";
 import { Menu, Avatar, Dropdown, Space, message, Button } from "antd";
 import {
@@ -9,6 +9,7 @@ import {
     MenuUnfoldOutlined,
     MenuFoldOutlined,
     HomeOutlined,
+    UserOutlined,
     DiffOutlined,
     EditOutlined,
 } from "@ant-design/icons";
@@ -23,18 +24,19 @@ export default function Layout() {
     const items = [
         { label: "首页", key: "/", icon: <HomeOutlined /> }, // 菜单项务必填写 key
         {
-            label: "内容管理",
-            key: "/arcticle",
-            icon: <DiffOutlined />,
+            label: "角色管理",
+            key: "/user",
+            icon: <UserOutlined />,
         },
         {
-            label: "发布文章",
+            label: "系统例子",
             key: "/publish",
             icon: <EditOutlined />,
         },
     ];
     function exitClick() {
-        global.delCookie("_Bearer_TOKEN_");
+        global.delStorage("tokenName");
+        global.delStorage("tokenValue");
         message.success("退出成功");
         navigation("/login", {
             replace: true,
@@ -53,6 +55,13 @@ export default function Layout() {
         setCollapsed(!collapsed);
     };
     useEffect(() => {
+        getUserInfo().then((res: any) => {
+            if (res.code == 200) {
+                setUserInfo(res.data);
+            } else {
+                message.error(res.error);
+            }
+        });
         getLocalPosition().then((res: any) => {
             if (res.adcode) {
                 getWeather(res.adcode).then((res: any) => {
@@ -60,13 +69,13 @@ export default function Layout() {
                 });
             }
         });
-        getUserInfo()
-            .then((res: any) => {
-                setUserInfo(res.data);
-            })
-            .catch((err: any) => {
-                message.error(err);
-            });
+        // getUserInfo()
+        //     .then((res: any) => {
+        //         setUserInfo(res.data);
+        //     })
+        //     .catch((err: any) => {
+        //         message.error(err);
+        //     });
     }, []);
     useEffect(() => {
         setOpenKeys([pathname]);
@@ -102,7 +111,7 @@ export default function Layout() {
                                 }}
                                 size="large"
                             >
-                                {userInfo.name}
+                                {userInfo.username}
                             </Avatar>
                         </Space>
                     </a>

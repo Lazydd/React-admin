@@ -2,18 +2,23 @@ import axios from "axios";
 import qs from "qs";
 import global from "./global";
 import { message } from "antd";
-let props = "";
 const instance = axios.create({
     // baseUrl: "http://",
     // timeout: 30000,
 });
-
+const error = (msg: string) => {
+    console.log(msg);
+    // alert(msg)
+    message.success(msg);
+};
 instance.interceptors.request.use((request: any) => {
     if (!request.url.includes("/v3/")) request.url = "/v1_0" + request.url;
-
-    if (global.getCookie("_Bearer_TOKEN_")) {
+    
+    if (global.getStorage("tokenName") && global.getStorage("tokenValue")) {
         request.headers["Authorization"] =
-            "Bearer " + `${global.getCookie("_Bearer_TOKEN_")}`;
+            global.getStorage("tokenName") +
+            " " +
+            `${global.getStorage("tokenValue")}`;
     }
 
     if (
@@ -46,7 +51,7 @@ instance.interceptors.response.use(
         }
     },
     (err: any) => {
-        message.error(err.message);
+        error(err.message);
         throw new Error("网络错误");
     }
 );

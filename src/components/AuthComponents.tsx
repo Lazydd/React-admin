@@ -3,8 +3,9 @@ import { Navigate } from "react-router-dom";
 import global from "../utils/global";
 
 export default function AuthComponents({ children }: { children: any }) {
-    const isToken = global.getCookie("_Bearer_TOKEN_");
-    if (isToken) {
+    const tokenName = global.getStorage("tokenName");
+    const tokenValue = global.getStorage("tokenValue");
+    if (tokenName && tokenValue) {
         return <Fragment>{children}</Fragment>;
     } else {
         return <Navigate to="/login"></Navigate>;

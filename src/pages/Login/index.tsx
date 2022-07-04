@@ -8,7 +8,7 @@ import {
 } from "@ant-design/icons";
 import "./index.scss";
 import global from "../../utils/global";
-import { userLogin, getUserInfo } from "../../api/index";
+import { userLogin } from "../../api/index";
 // import { useStore } from "../../store";
 export default function Login() {
     // const { loginStore } = useStore();
@@ -38,10 +38,13 @@ export default function Login() {
         userLogin({
             username: values.username,
             password: values.password,
+            isLastingCookie: false,
+            device: "PC",
         }).then((res: any) => {
             let { tokenName, tokenValue } = res.data;
             global.setStorage("tokenName", tokenName);
             global.setStorage("tokenValue", tokenValue);
+            // global.setStorage("userName", tokenValue);
             navigation("/", {
                 replace: true,
                 state: {},
