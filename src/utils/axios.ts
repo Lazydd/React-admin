@@ -7,13 +7,11 @@ const instance = axios.create({
     // timeout: 30000,
 });
 const error = (msg: string) => {
-    console.log(msg);
-    // alert(msg)
-    message.success(msg);
+    message.error(msg);
 };
 instance.interceptors.request.use((request: any) => {
     if (!request.url.includes("/v3/")) request.url = "/v1_0" + request.url;
-    
+
     if (global.getStorage("tokenName") && global.getStorage("tokenValue")) {
         request.headers["Authorization"] =
             global.getStorage("tokenName") +
@@ -42,9 +40,7 @@ instance.interceptors.response.use(
     (response: any) => {
         if (response.status >= 200 && response.status < 300) {
             if (response.data.code === 401) {
-                setTimeout(() => {
-                    message.error(response.data.error);
-                }, 1000);
+                message.error(response.data.error);
             } else {
                 return response.data;
             }

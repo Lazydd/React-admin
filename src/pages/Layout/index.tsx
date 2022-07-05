@@ -10,8 +10,8 @@ import {
     MenuFoldOutlined,
     HomeOutlined,
     UserOutlined,
-    DiffOutlined,
-    EditOutlined,
+    TeamOutlined,
+    LockOutlined,
 } from "@ant-design/icons";
 export default function Layout() {
     const navigation = useNavigate();
@@ -25,13 +25,18 @@ export default function Layout() {
         { label: "首页", key: "/", icon: <HomeOutlined /> }, // 菜单项务必填写 key
         {
             label: "角色管理",
-            key: "/user",
+            key: "/role",
             icon: <UserOutlined />,
         },
         {
-            label: "系统例子",
-            key: "/publish",
-            icon: <EditOutlined />,
+            label: "用户管理",
+            key: "/user",
+            icon: <TeamOutlined />,
+        },
+        {
+            label: "权限管理",
+            key: "/authority",
+            icon: <LockOutlined />,
         },
     ];
     function exitClick() {
@@ -111,7 +116,7 @@ export default function Layout() {
                                 }}
                                 size="large"
                             >
-                                {userInfo.username}
+                                {userInfo?.username}
                             </Avatar>
                         </Space>
                     </a>

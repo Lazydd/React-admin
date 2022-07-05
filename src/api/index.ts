@@ -23,38 +23,46 @@ export const getLocalPosition = () => {
     return instance.get("/v3/ip?key=6d78e0a70cbe6fc669f1a0705a85a5b5");
 };
 
-export const getArticle = () => {
-    return instance.get("/channels");
-};
-
-export const getUserList = (params: Object) => {
+export const getRoleList = (params: Object) => {
     return instance.get("/system/role/page", { params });
 };
 
-export const saveUser = (params: Object) => {
+export const saveRole = (params: Object) => {
     return instance.post("/system/role/save", params);
 };
 
-export const updateUser = (params: Object) => {
+export const updateRole = (params: Object) => {
     return instance.post("/system/role/update", params);
 };
 
-export const deleteUser = (id: string) => {
+export const deleteRole = (id: string) => {
     return instance.delete("/system/role/remove", { params: { ids: id } });
 };
 
-export const saveArticle = (params: any) => {
-    return instance.post("/mp/articles?draft=false", params, {
-        headers: { "Content-Type": "application/json" },
-    });
+export const getUserList = (params: Object) => {
+    return instance.get("/system/user/page", { params });
 };
 
-export const editSaveArticle = (params: any, id: string) => {
-    return instance.put(`/mp/articles/${id}?draft=false`, params, {
-        headers: { "Content-Type": "application/json" },
-    });
+export const saveUser = (params: Object) => {
+    return instance.post("/system/user/save", params);
 };
 
-export const getArticleDetails = (id: string) => {
-    return instance.get("/mp/articles/" + id);
+export const changeUserType = (params: Object) => {
+    return instance.post("/system/user/page", params);
+};
+
+export const resetUser = (id: string) => {
+    return instance.post("/system/user/reset/password", { id });
+};
+
+export const deleteUser = (id: string) => {
+    return instance.delete("/system/user/remove", { params: { ids: id } });
+};
+
+export const getAuthorityList = (params: Object) => {
+    return instance.get("/system/api/page", { params });
+};
+
+export const refreshAuthorityList = () => {
+    return instance.get("/system/api/refresh");
 };

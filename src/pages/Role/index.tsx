@@ -9,23 +9,17 @@ import {
     Form,
     message,
     Modal,
-    Tag,
     Input,
 } from "antd";
 
 import type { ColumnsType } from "antd/lib/table";
 import moment from "moment";
 import "./index.scss";
-import {
-    EditOutlined,
-    DeleteOutlined,
-    PlusOutlined,
-    ToolOutlined,
-} from "@ant-design/icons";
+import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 const { Search } = Input;
 
-import { getUserList, resetUser, saveUser, deleteUser } from "../../api";
-export default function User() {
+import { getRoleList, saveRole, updateRole, deleteRole } from "../../api";
+export default function Role() {
     const [loading, setLoading] = useState(true);
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [visible, setVisible] = useState(false);
@@ -51,39 +45,55 @@ export default function User() {
     interface DataType {
         id: string;
         index: number;
-        username: string;
-        disable: boolean;
-        disableTime: string;
+        roleName: string;
+        roleFlag: string;
+        createdTime: string;
+        updatedTime: string;
+        createdBy: string;
+        updatedBy: string;
     }
     const columns: ColumnsType<DataType> = [
         {
             title: "序号",
             dataIndex: "index",
-            fixed: "left",
             width: 80,
+            fixed: "left",
+
             render: (text: any, record: any, index: number) =>
                 `${(params.current - 1) * params.size + index + 1}`,
         },
         {
-            title: "用户名称",
-            dataIndex: "username",
-            width: 100,
+            title: "角色名称",
+            dataIndex: "roleName",
+            width: 200,
         },
         {
-            title: "是否禁用",
-            dataIndex: "disable",
-            width: 150,
-            render: (text: any) =>
-                text ? (
-                    <Tag color="#f50">是</Tag>
-                ) : (
-                    <Tag color="#87d068">否</Tag>
-                ),
+            title: "角色拼音",
+            dataIndex: "roleFlag",
+            width: 200,
         },
         {
-            title: "封禁时长",
+            title: "创建时间",
             width: 180,
-            dataIndex: "disableTime",
+            dataIndex: "createdTime",
+            render: (text: any) => moment(text).format("YYYY-MM-DD HH:mm:ss"),
+        },
+        {
+            title: "更新时间",
+            width: 180,
+            dataIndex: "updatedTime",
+            render: (text: any) =>
+                text ? moment(text).format("YYYY-MM-DD HH:mm:ss") : "",
+        },
+        {
+            title: "创建人",
+            width: 180,
+            dataIndex: "createdBy",
+        },
+        {
+            title: "更新人",
+            width: 180,
+            dataIndex: "updatedBy",
         },
         {
             title: "操作",
@@ -93,14 +103,14 @@ export default function User() {
             render: (item) => (
                 <div className="control-group">
                     <Space size="middle">
-                        {/* <Button
+                        <Button
                             type="primary"
                             shape="circle"
                             icon={<EditOutlined />}
                             onClick={() => {
                                 edit(item);
                             }}
-                        ></Button> */}
+                        ></Button>
                         <Popconfirm
                             title="确认删除？"
                             placement="left"
@@ -117,47 +127,48 @@ export default function User() {
                                 icon={<DeleteOutlined />}
                             ></Button>
                         </Popconfirm>
-                        <Popconfirm
-                            title="确认重置密码？"
-                            placement="left"
-                            onConfirm={() => {
-                                reset(item);
-                            }}
-                            okText="确定"
-                            cancelText="取消"
-                        >
-                            <Button
-                                type="primary"
-                                danger
-                                shape="circle"
-                                icon={<ToolOutlined />}
-                            ></Button>
-                        </Popconfirm>
                     </Space>
                 </div>
             ),
         },
     ];
-    // const edit = (item: any) => {
-    //     setVisible(true);
-    //     form.setFieldsValue({ ...item });
-    // };
+    const edit = (item: any) => {
+        setVisible(true);
+        form.setFieldsValue({ ...item });
+    };
 
     const onFinish = (values: any) => {
         setConfirmLoading(true);
-        saveUser(values)
-            .then((res: any) => {
-                if (res.code == 200) {
-                    setVisible(false);
-                    setParams({ ...params, current: 1 });
-                    message.success("保存成功");
-                } else {
-                    message.error(res.error);
-                }
-            })
-            .finally(() => {
-                setConfirmLoading(false);
-            });
+        let id = form.getFieldValue("id");
+        if (id) {
+            updateRole({ ...values, id })
+                .then((res: any) => {
+                    if (res.code == 200) {
+                        setVisible(false);
+                        setParams({ ...params, current: 1 });
+                        message.success("保存成功");
+                    } else {
+                        message.error(res.error);
+                    }
+                })
+                .finally(() => {
+                    setConfirmLoading(false);
+                });
+        } else {
+            saveRole(values)
+                .then((res: any) => {
+                    if (res.code == 200) {
+                        setVisible(false);
+                        setParams({ ...params, current: 1 });
+                        message.success("保存成功");
+                    } else {
+                        message.error(res.error);
+                    }
+                })
+                .finally(() => {
+                    setConfirmLoading(false);
+                });
+        }
     };
 
     const onSearch = (roleName: string) => {
@@ -167,45 +178,30 @@ export default function User() {
     const pageChange = (current: number) => {
         setParams({ ...params, current });
     };
-    const confirm = (item: any) => {
-        deleteUser(item.id).then((res: any) => {
-            if (res.code == 200) {
-                message.success("删除成功");
-                setParams({ ...params, current: 1 });
-            } else {
-                message.error(res.error);
-            }
-        });
-    };
 
-    const reset = (item: any) => {
-        resetUser(item.id).then((res: any) => {
-            if (res.code == 200) {
-                message.success("重置密码成功");
-            } else {
-                message.error(res.error);
-            }
+    const confirm = (item: any) => {
+        deleteRole(item.id).then((res: any) => {
+            message.success("删除成功");
+            setParams({ ...params, current: 1 });
         });
     };
 
     const getData = async () => {
-        getUserList({
+        const res: any = await getRoleList({
             ...params,
             roleName: params.roleName || undefined,
-        })
-            .then((res: any) => {
-                if (res.code == 200) {
-                    setAticleTableData({
-                        list: res.records,
-                        count: res.total,
-                    });
-                } else {
-                    message.error(res.error);
-                }
-            })
-            .finally(() => {
-                setLoading(false);
+        });
+        if (res.code == 200) {
+            const { records, total } = res;
+            setAticleTableData({
+                list: records,
+                count: total,
             });
+        } else {
+            message.error(res.error);
+        }
+
+        setLoading(false);
     };
 
     useEffect(() => {
@@ -219,7 +215,7 @@ export default function User() {
                     <a href="">首页</a>
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>
-                    <a href="">用户管理</a>
+                    <a href="">角色管理</a>
                 </Breadcrumb.Item>
             </Breadcrumb>
             <Card style={{ width: "100%", marginTop: 20, overflow: "hidden" }}>
@@ -281,28 +277,16 @@ export default function User() {
             >
                 <Form {...layout} form={form} onFinish={onFinish}>
                     <Form.Item
-                        name="username"
-                        label="用户名"
+                        name="roleName"
+                        label="角色名称"
                         rules={[
                             {
                                 required: true,
-                                message: "请输入用户名",
+                                message: "请输入角色名称",
                             },
                         ]}
                     >
-                        <Input placeholder="请输入用户名" />
-                    </Form.Item>
-                    <Form.Item
-                        name="password"
-                        label="密码"
-                        rules={[
-                            {
-                                required: true,
-                                message: "请输入密码",
-                            },
-                        ]}
-                    >
-                        <Input placeholder="请输入密码" />
+                        <Input placeholder="请输入角色名称" />
                     </Form.Item>
                 </Form>
             </Modal>

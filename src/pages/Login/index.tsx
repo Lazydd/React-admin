@@ -38,7 +38,7 @@ export default function Login() {
         userLogin({
             username: values.username,
             password: values.password,
-            isLastingCookie: false,
+            isLastingCookie: values.isLastingCookie || false,
             device: "PC",
         }).then((res: any) => {
             let { tokenName, tokenValue } = res.data;
@@ -104,7 +104,7 @@ export default function Login() {
                         </Form.Item>
                         <Form.Item>
                             <Form.Item
-                                name="remember"
+                                name="isLastingCookie"
                                 valuePropName="checked"
                                 noStyle
                             >
