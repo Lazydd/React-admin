@@ -11,8 +11,9 @@ import {
     Modal,
     Tag,
     Input,
+    Transfer,
 } from "antd";
-
+import type { TransferDirection } from "antd/es/transfer";
 import type { ColumnsType } from "antd/lib/table";
 import moment from "moment";
 import "./index.scss";
@@ -20,15 +21,29 @@ import {
     EditOutlined,
     DeleteOutlined,
     PlusOutlined,
+    ApiOutlined,
     ToolOutlined,
 } from "@ant-design/icons";
+interface RecordType {
+    key: string;
+    roleName: string;
+    description: string;
+    chosen: boolean;
+}
 const { Search } = Input;
 
-import { getUserList, resetUser, saveUser, deleteUser } from "../../api";
+import {
+    getUserList,
+    resetUser,
+    saveUser,
+    deleteUser,
+    getRoleList,
+} from "../../api";
 export default function User() {
     const [loading, setLoading] = useState(true);
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [visible, setVisible] = useState(false);
+    const [relationVisible, setRelationVisible] = useState(false);
     const [articleTableData, setAticleTableData] = useState({
         list: [],
         count: 0,
@@ -38,6 +53,11 @@ export default function User() {
         roleName: "",
         size: 10,
     });
+    const [roleList, setRoleList] = useState<RecordType[]>([]);
+    const [roleSearch, setRoleSearch] = useState<string>();
+    const [oneWay, setOneWay] = useState(false);
+    const [mockData, setMockData] = useState<RecordType[]>([]);
+    const [targetKeys, setTargetKeys] = useState<string[]>([]);
 
     const [form] = Form.useForm();
     const layout = {
@@ -47,6 +67,10 @@ export default function User() {
     const handleCancel = () => {
         form.resetFields();
         setVisible(false);
+    };
+    const relationCancel = () => {
+        form.resetFields();
+        setRelationVisible(false);
     };
     interface DataType {
         id: string;
@@ -93,14 +117,14 @@ export default function User() {
             render: (item) => (
                 <div className="control-group">
                     <Space size="middle">
-                        {/* <Button
+                        <Button
                             type="primary"
                             shape="circle"
-                            icon={<EditOutlined />}
+                            icon={<ApiOutlined />}
                             onClick={() => {
-                                edit(item);
+                                relation(item);
                             }}
-                        ></Button> */}
+                        ></Button>
                         <Popconfirm
                             title="确认删除？"
                             placement="left"
@@ -164,9 +188,34 @@ export default function User() {
         setParams({ ...params, roleName });
     };
 
+    const relation = (item: any) => {
+        getRoleList({ userId: item.id }).then((res: any) => {
+            if (res.code == 200) {
+                setRoleList(res.data);
+            } else {
+                message.error(res.error);
+            }
+        });
+        setRelationVisible(true);
+    };
+
     const pageChange = (current: number) => {
         setParams({ ...params, current });
     };
+
+    const relationSearch = (item: string) => {
+        setRoleSearch(item);
+    };
+
+    const onChange = (
+        newTargetKeys: string[],
+        direction: TransferDirection,
+        moveKeys: string[]
+    ) => {
+        // console.log(newTargetKeys, direction, moveKeys);
+        // setTargetKeys(newTargetKeys);
+    };
+
     const confirm = (item: any) => {
         deleteUser(item.id).then((res: any) => {
             if (res.code == 200) {
@@ -211,7 +260,34 @@ export default function User() {
     useEffect(() => {
         setLoading(true);
         getData();
+        const newTargetKeys = [];
+        const newMockData = [];
+        for (let i = 0; i < 2000; i++) {
+            const data = {
+                key: i.toString(),
+                title: `content${i + 1}`,
+                description: `description of content${i + 1}`,
+                chosen: Math.random() * 2 > 1,
+            };
+            if (data.chosen) {
+                newTargetKeys.push(data.key);
+            }
+            newMockData.push(data);
+        }
+
+        setTargetKeys(newTargetKeys);
+        setMockData(roleList);
     }, [params]);
+
+    // useEffect(() => {
+    //     getRoleList({ userId }).then((res: any) => {
+    //         if (res.code == 200) {
+    //             setRoleList(res.records);
+    //         } else {
+    //             message.error(res.error);
+    //         }
+    //     });
+    // }, []);
     return (
         <>
             <Breadcrumb>
@@ -305,6 +381,27 @@ export default function User() {
                         <Input placeholder="请输入密码" />
                     </Form.Item>
                 </Form>
+            </Modal>
+            <Modal
+                title="绑定角色"
+                visible={relationVisible}
+                onOk={() => form.submit()}
+                onCancel={relationCancel}
+                confirmLoading={confirmLoading}
+                forceRender
+                okText="确定"
+                cancelText="取消"
+            >
+                <Transfer
+                    dataSource={roleList}
+                    targetKeys={targetKeys}
+                    onChange={onChange}
+                    showSearch
+                    onSearch={relationSearch}
+                    render={(item) => item.roleName}
+                    oneWay={oneWay}
+                    pagination
+                />
             </Modal>
         </>
     );

@@ -18,7 +18,7 @@ import "./index.scss";
 import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 const { Search } = Input;
 
-import { getRoleList, saveRole, updateRole, deleteRole } from "../../api";
+import { getRoleListPage, saveRole, updateRole, deleteRole } from "../../api";
 export default function Role() {
     const [loading, setLoading] = useState(true);
     const [confirmLoading, setConfirmLoading] = useState(false);
@@ -37,10 +37,6 @@ export default function Role() {
     const layout = {
         labelCol: { span: 6 },
         wrapperCol: { span: 15 },
-    };
-    const handleCancel = () => {
-        form.resetFields();
-        setVisible(false);
     };
     interface DataType {
         id: string;
@@ -187,7 +183,7 @@ export default function Role() {
     };
 
     const getData = async () => {
-        const res: any = await getRoleList({
+        const res: any = await getRoleListPage({
             ...params,
             roleName: params.roleName || undefined,
         });
@@ -269,7 +265,8 @@ export default function Role() {
                 title={form.getFieldValue("id") ? "编辑" : "新增"}
                 visible={visible}
                 onOk={() => form.submit()}
-                onCancel={handleCancel}
+                onCancel={() => setVisible(false)}
+                afterClose={() => form.resetFields()}
                 confirmLoading={confirmLoading}
                 forceRender
                 okText="确定"

@@ -23,8 +23,12 @@ export const getLocalPosition = () => {
     return instance.get("/v3/ip?key=6d78e0a70cbe6fc669f1a0705a85a5b5");
 };
 
-export const getRoleList = (params: Object) => {
+export const getRoleListPage = (params: Object) => {
     return instance.get("/system/role/page", { params });
+};
+
+export const getRoleList = (params: Object) => {
+    return instance.get("/system/role/list", { params });
 };
 
 export const saveRole = (params: Object) => {
