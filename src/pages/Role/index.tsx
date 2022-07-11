@@ -10,19 +10,33 @@ import {
     message,
     Modal,
     Input,
+    Transfer,
 } from "antd";
-
+import type { TransferDirection } from "antd/es/transfer";
 import type { ColumnsType } from "antd/lib/table";
 import moment from "moment";
 import "./index.scss";
-import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+    EditOutlined,
+    DeleteOutlined,
+    PlusOutlined,
+    ApiOutlined,
+} from "@ant-design/icons";
 const { Search } = Input;
 
-import { getRoleListPage, saveRole, updateRole, deleteRole } from "../../api";
+import {
+    getRoleListPage,
+    saveRole,
+    updateRole,
+    deleteRole,
+    relationApi,
+    getAuthorityList,
+} from "../../api";
 export default function Role() {
     const [loading, setLoading] = useState(true);
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [visible, setVisible] = useState(false);
+    const [relationVisible, setRelationVisible] = useState(false);
     const [articleTableData, setAticleTableData] = useState({
         list: [],
         count: 0,
@@ -32,6 +46,12 @@ export default function Role() {
         roleName: "",
         size: 10,
     });
+
+    const [roleList, setRoleList] = useState<RecordType[]>([]);
+    const [roleSearch, setRoleSearch] = useState<string>();
+    const [userInfo, setUserInfo] = useState({} as UserInfoType);
+    const [targetKeys, setTargetKeys] = useState<string[]>([]);
+    const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
 
     const [form] = Form.useForm();
     const layout = {
@@ -47,6 +67,16 @@ export default function Role() {
         updatedTime: string;
         createdBy: string;
         updatedBy: string;
+    }
+    interface RecordType {
+        key: string;
+        apiName: string;
+        disable: boolean;
+    }
+    interface UserInfoType {
+        id: string;
+        username: string;
+        disable: boolean;
     }
     const columns: ColumnsType<DataType> = [
         {
@@ -95,7 +125,7 @@ export default function Role() {
             title: "操作",
             align: "center",
             fixed: "right",
-            width: 140,
+            width: 160,
             render: (item) => (
                 <div className="control-group">
                     <Space size="middle">
@@ -105,6 +135,14 @@ export default function Role() {
                             icon={<EditOutlined />}
                             onClick={() => {
                                 edit(item);
+                            }}
+                        ></Button>
+                        <Button
+                            type="primary"
+                            shape="circle"
+                            icon={<ApiOutlined />}
+                            onClick={() => {
+                                relation(item);
                             }}
                         ></Button>
                         <Popconfirm
@@ -128,9 +166,40 @@ export default function Role() {
             ),
         },
     ];
+
+    const relationCancel = () => {
+        form.resetFields();
+        setRelationVisible(false);
+    };
+
     const edit = (item: any) => {
         setVisible(true);
         form.setFieldsValue({ ...item });
+    };
+
+    const relation = (item: any) => {
+        setUserInfo(item);
+        getAuthorityList({ roleId: item.id }).then((res: any) => {
+            if (res.code == 200) {
+                let arr = res.data.map((item: any) => {
+                    item.key = item.id;
+                    return item;
+                });
+                let arr2 = res.data
+                    .filter((item: any) => item.disabled)
+                    .map((item: any) => {
+                        item.key = item.id;
+                        item.disabled = !item.disabled;
+                        return item.key;
+                    });
+
+                setRoleList(arr);
+                setTargetKeys(arr2);
+            } else {
+                message.error(res.error);
+            }
+        });
+        setRelationVisible(true);
     };
 
     const onFinish = (values: any) => {
@@ -165,6 +234,40 @@ export default function Role() {
                     setConfirmLoading(false);
                 });
         }
+    };
+
+    const relationApiSubmit = () => {
+        relationApi({
+            roleId: userInfo.id,
+            apiIds: targetKeys?.join(","),
+        }).then((res: any) => {
+            if (res.code == 200) {
+                message.success("绑定成功");
+                setRelationVisible(false);
+                setParams({ ...params, current: 1 });
+            } else {
+                message.error(res.error);
+            }
+        });
+    };
+
+    const onChange = (
+        newTargetKeys: string[],
+        direction: TransferDirection,
+        moveKeys: string[]
+    ) => {
+        setTargetKeys(newTargetKeys);
+    };
+
+    const onSelectChange = (
+        sourceSelectedKeys: string[],
+        targetSelectedKeys: string[]
+    ) => {
+        setSelectedKeys([...sourceSelectedKeys, ...targetSelectedKeys]);
+    };
+
+    const relationSearch = (item: string) => {
+        setRoleSearch(item);
     };
 
     const onSearch = (roleName: string) => {
@@ -286,6 +389,30 @@ export default function Role() {
                         <Input placeholder="请输入角色名称" />
                     </Form.Item>
                 </Form>
+            </Modal>
+            <Modal
+                title="绑定Api"
+                visible={relationVisible}
+                onOk={() => relationApiSubmit()}
+                bodyStyle={{ display: "flex", justifyContent: "center" }}
+                onCancel={relationCancel}
+                width="750px"
+                confirmLoading={confirmLoading}
+                forceRender
+                okText="确定"
+                cancelText="取消"
+            >
+                <Transfer
+                    dataSource={roleList}
+                    targetKeys={targetKeys}
+                    onChange={onChange}
+                    showSearch
+                    onSearch={relationSearch}
+                    selectedKeys={selectedKeys}
+                    onSelectChange={onSelectChange}
+                    render={(item) => item.apiName}
+                    pagination
+                />
             </Modal>
         </>
     );

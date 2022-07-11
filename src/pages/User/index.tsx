@@ -27,8 +27,12 @@ import {
 interface RecordType {
     key: string;
     roleName: string;
-    description: string;
-    chosen: boolean;
+    disable: boolean;
+}
+interface UserInfoType {
+    id: string;
+    username: string;
+    disable: boolean;
 }
 const { Search } = Input;
 
@@ -38,6 +42,7 @@ import {
     saveUser,
     deleteUser,
     getRoleList,
+    relationRole,
 } from "../../api";
 export default function User() {
     const [loading, setLoading] = useState(true);
@@ -55,9 +60,9 @@ export default function User() {
     });
     const [roleList, setRoleList] = useState<RecordType[]>([]);
     const [roleSearch, setRoleSearch] = useState<string>();
-    const [oneWay, setOneWay] = useState(false);
-    const [mockData, setMockData] = useState<RecordType[]>([]);
+    const [userInfo, setUserInfo] = useState({} as UserInfoType);
     const [targetKeys, setTargetKeys] = useState<string[]>([]);
+    const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
 
     const [form] = Form.useForm();
     const layout = {
@@ -113,7 +118,7 @@ export default function User() {
             title: "操作",
             align: "center",
             fixed: "right",
-            width: 140,
+            width: 160,
             render: (item) => (
                 <div className="control-group">
                     <Space size="middle">
@@ -189,9 +194,23 @@ export default function User() {
     };
 
     const relation = (item: any) => {
+        setUserInfo(item);
         getRoleList({ userId: item.id }).then((res: any) => {
             if (res.code == 200) {
-                setRoleList(res.data);
+                let arr = res.data.map((item: any) => {
+                    item.key = item.id;
+                    return item;
+                });
+                let arr2 = res.data
+                    .filter((item: any) => item.disabled)
+                    .map((item: any) => {
+                        item.key = item.id;
+                        item.disabled = !item.disabled;
+                        return item.key;
+                    });
+
+                setRoleList(arr);
+                setTargetKeys(arr2);
             } else {
                 message.error(res.error);
             }
@@ -203,6 +222,13 @@ export default function User() {
         setParams({ ...params, current });
     };
 
+    const onSelectChange = (
+        sourceSelectedKeys: string[],
+        targetSelectedKeys: string[]
+    ) => {
+        setSelectedKeys([...sourceSelectedKeys, ...targetSelectedKeys]);
+    };
+
     const relationSearch = (item: string) => {
         setRoleSearch(item);
     };
@@ -212,8 +238,7 @@ export default function User() {
         direction: TransferDirection,
         moveKeys: string[]
     ) => {
-        // console.log(newTargetKeys, direction, moveKeys);
-        // setTargetKeys(newTargetKeys);
+        setTargetKeys(newTargetKeys);
     };
 
     const confirm = (item: any) => {
@@ -231,6 +256,21 @@ export default function User() {
         resetUser(item.id).then((res: any) => {
             if (res.code == 200) {
                 message.success("重置密码成功");
+            } else {
+                message.error(res.error);
+            }
+        });
+    };
+
+    const relationRoleSubmit = () => {
+        relationRole({
+            userId: userInfo.id,
+            roleIds: targetKeys?.join(","),
+        }).then((res: any) => {
+            if (res.code == 200) {
+                message.success("绑定成功");
+                setRelationVisible(false);
+                setParams({ ...params, current: 1 });
             } else {
                 message.error(res.error);
             }
@@ -260,23 +300,6 @@ export default function User() {
     useEffect(() => {
         setLoading(true);
         getData();
-        const newTargetKeys = [];
-        const newMockData = [];
-        for (let i = 0; i < 2000; i++) {
-            const data = {
-                key: i.toString(),
-                title: `content${i + 1}`,
-                description: `description of content${i + 1}`,
-                chosen: Math.random() * 2 > 1,
-            };
-            if (data.chosen) {
-                newTargetKeys.push(data.key);
-            }
-            newMockData.push(data);
-        }
-
-        setTargetKeys(newTargetKeys);
-        setMockData(roleList);
     }, [params]);
 
     // useEffect(() => {
@@ -385,8 +408,10 @@ export default function User() {
             <Modal
                 title="绑定角色"
                 visible={relationVisible}
-                onOk={() => form.submit()}
+                onOk={() => relationRoleSubmit()}
+                bodyStyle={{ display: "flex", justifyContent: "center" }}
                 onCancel={relationCancel}
+                width="750px"
                 confirmLoading={confirmLoading}
                 forceRender
                 okText="确定"
@@ -398,8 +423,9 @@ export default function User() {
                     onChange={onChange}
                     showSearch
                     onSearch={relationSearch}
+                    selectedKeys={selectedKeys}
+                    onSelectChange={onSelectChange}
                     render={(item) => item.roleName}
-                    oneWay={oneWay}
                     pagination
                 />
             </Modal>

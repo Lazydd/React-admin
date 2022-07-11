@@ -43,6 +43,10 @@ export const deleteRole = (id: string) => {
     return instance.delete("/system/role/remove", { params: { ids: id } });
 };
 
+export const relationApi = (params: Object) => {
+    return instance.post("/system/role/relation/api", params);
+};
+
 export const getUserList = (params: Object) => {
     return instance.get("/system/user/page", { params });
 };
@@ -63,10 +67,18 @@ export const deleteUser = (id: string) => {
     return instance.delete("/system/user/remove", { params: { ids: id } });
 };
 
-export const getAuthorityList = (params: Object) => {
+export const getAuthorityPage = (params: Object) => {
     return instance.get("/system/api/page", { params });
+};
+
+export const getAuthorityList = (params: Object) => {
+    return instance.get("/system/api/list", { params });
 };
 
 export const refreshAuthorityList = () => {
     return instance.get("/system/api/refresh");
+};
+
+export const relationRole = (params: Object) => {
+    return instance.post("/system/user/relation/role", params);
 };
