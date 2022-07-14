@@ -41,15 +41,19 @@ export default function Login() {
             isLastingCookie: values.isLastingCookie || false,
             device: "PC",
         }).then((res: any) => {
-            let { tokenName, tokenValue } = res.data;
-            global.setStorage("tokenName", tokenName);
-            global.setStorage("tokenValue", tokenValue);
-            // global.setStorage("userName", tokenValue);
-            navigation("/", {
-                replace: true,
-                state: {},
-            });
-            message.success("登录成功");
+            if (res.code == 200) {
+                let { tokenName, tokenValue } = res.data;
+                global.setStorage("tokenName", tokenName);
+                global.setStorage("tokenValue", tokenValue);
+                // global.setStorage("userName", tokenValue);
+                navigation("/", {
+                    replace: true,
+                    state: {},
+                });
+                message.success("登录成功");
+            } else {
+                message.error(res.error);
+            }
         });
 
         // loginStore.setToken({

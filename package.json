@@ -46,6 +46,7 @@
     ]
   },
   "devDependencies": {
+    "react-json-view": "^1.21.3",
     "sass": "^1.51.0"
   }
 }

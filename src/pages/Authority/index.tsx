@@ -229,6 +229,7 @@ export default function Authority() {
                         current: params.current,
                         onChange: pageChange,
                         total: articleTableData.count,
+                        showSizeChanger: false,
                     }}
                     rowKey={(record) => record.id}
                 />

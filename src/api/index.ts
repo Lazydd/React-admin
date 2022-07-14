@@ -82,3 +82,7 @@ export const refreshAuthorityList = () => {
 export const relationRole = (params: Object) => {
     return instance.post("/system/user/relation/role", params);
 };
+
+export const getLogPage = (params: Object) => {
+    return instance.get("/system/logs/page", { params });
+};

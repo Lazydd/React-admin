@@ -12,6 +12,7 @@ import {
     UserOutlined,
     TeamOutlined,
     LockOutlined,
+    ExceptionOutlined,
 } from "@ant-design/icons";
 export default function Layout() {
     const navigation = useNavigate();
@@ -37,6 +38,11 @@ export default function Layout() {
             label: "权限管理",
             key: "/authority",
             icon: <LockOutlined />,
+        },
+        {
+            label: "日志管理",
+            key: "/log",
+            icon: <ExceptionOutlined />,
         },
     ];
     function exitClick() {
@@ -105,6 +111,16 @@ export default function Layout() {
                     </li>
                     <li className="navList">指南</li>
                     <li className="navList">组件</li>
+                    <li
+                        className="navList"
+                        onClick={() =>
+                            window.open(
+                                "http://192.168.2.13:3000/v1_0/doc.html"
+                            )
+                        }
+                    >
+                        文档
+                    </li>
                 </ul>
                 <Dropdown overlay={menu}>
                     <a onClick={(e) => e.preventDefault()}>

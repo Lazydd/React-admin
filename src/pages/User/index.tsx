@@ -12,6 +12,7 @@ import {
     Tag,
     Input,
     Transfer,
+    Switch,
 } from "antd";
 import type { TransferDirection } from "antd/es/transfer";
 import type { ColumnsType } from "antd/lib/table";
@@ -122,6 +123,11 @@ export default function User() {
             render: (item) => (
                 <div className="control-group">
                     <Space size="middle">
+                        <Switch
+                            checkedChildren="开启"
+                            unCheckedChildren="关闭"
+                            defaultChecked={item.disable}
+                        />
                         <Button
                             type="primary"
                             shape="circle"
@@ -364,6 +370,7 @@ export default function User() {
                         current: params.current,
                         onChange: pageChange,
                         total: articleTableData.count,
+                        showSizeChanger: false,
                     }}
                     rowKey={(record) => record.id}
                 />

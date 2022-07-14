@@ -280,8 +280,12 @@ export default function Role() {
 
     const confirm = (item: any) => {
         deleteRole(item.id).then((res: any) => {
-            message.success("删除成功");
-            setParams({ ...params, current: 1 });
+            if (res.code == 200) {
+                message.success("删除成功");
+                setParams({ ...params, current: 1 });
+            } else {
+                message.error(res.error);
+            }
         });
     };
 
@@ -360,6 +364,7 @@ export default function Role() {
                         current: params.current,
                         onChange: pageChange,
                         total: articleTableData.count,
+                        showSizeChanger: false,
                     }}
                     rowKey={(record) => record.id}
                 />
