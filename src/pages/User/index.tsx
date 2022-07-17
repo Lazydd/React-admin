@@ -16,10 +16,16 @@ import {
 } from "antd";
 import type { TransferDirection } from "antd/es/transfer";
 import type { ColumnsType } from "antd/lib/table";
-import moment from "moment";
+import {
+    getUserList,
+    resetUser,
+    saveUser,
+    deleteUser,
+    getRoleList,
+    relationRole,
+} from "../../api";
 import "./index.scss";
 import {
-    EditOutlined,
     DeleteOutlined,
     PlusOutlined,
     ApiOutlined,
@@ -37,14 +43,6 @@ interface UserInfoType {
 }
 const { Search } = Input;
 
-import {
-    getUserList,
-    resetUser,
-    saveUser,
-    deleteUser,
-    getRoleList,
-    relationRole,
-} from "../../api";
 export default function User() {
     const [loading, setLoading] = useState(true);
     const [confirmLoading, setConfirmLoading] = useState(false);

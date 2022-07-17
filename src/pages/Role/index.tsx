@@ -15,6 +15,14 @@ import {
 import type { TransferDirection } from "antd/es/transfer";
 import type { ColumnsType } from "antd/lib/table";
 import moment from "moment";
+import {
+    getRoleListPage,
+    saveRole,
+    updateRole,
+    deleteRole,
+    relationApi,
+    getAuthorityList,
+} from "../../api";
 import "./index.scss";
 import {
     EditOutlined,
@@ -24,14 +32,6 @@ import {
 } from "@ant-design/icons";
 const { Search } = Input;
 
-import {
-    getRoleListPage,
-    saveRole,
-    updateRole,
-    deleteRole,
-    relationApi,
-    getAuthorityList,
-} from "../../api";
 export default function Role() {
     const [loading, setLoading] = useState(true);
     const [confirmLoading, setConfirmLoading] = useState(false);

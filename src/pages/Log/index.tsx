@@ -10,13 +10,14 @@ import {
     Input,
     Empty,
 } from "antd";
-const { Search } = Input;
 import type { ColumnsType } from "antd/lib/table";
 import moment from "moment";
 import ReactJson from "react-json-view";
 import "./index.scss";
 
 import { getLogPage } from "../../api";
+const { Search } = Input;
+
 export default function Authority() {
     const [loading, setLoading] = useState(true);
     const [response, setResponse] = useState({});
