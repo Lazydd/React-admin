@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Outlet, useLocation } from "react-router-dom";
-import global from "../../utils/global";
-import { getWeather, getLocalPosition, getUserInfo } from "../../api";
+import global from "utils/global";
+import { getWeather, getLocalPosition, getUserInfo } from "api";
 import "./index.scss";
 import { Menu, Avatar, Dropdown, Space, message, Button } from "antd";
 import {

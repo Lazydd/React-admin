@@ -26,7 +26,7 @@ import {
     getRoleList,
     relationRole,
     disableUser,
-} from "../../api";
+} from "api";
 import "./index.scss";
 import {
     DeleteOutlined,

@@ -15,7 +15,7 @@ import moment from "moment";
 import ReactJson from "react-json-view";
 import "./index.scss";
 
-import { getLogPage } from "../../api";
+import { getLogPage } from "api";
 const { Search } = Input;
 
 export default function Authority() {

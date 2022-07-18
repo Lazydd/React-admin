@@ -1,0 +1,1 @@
+{"version":3,"file":"static/js/947.c6e11c1c.chunk.js","mappings":"iLAEe,SAASA,IACtB,OACE","sources":["pages/Home/index.tsx"],"sourcesContent":["import React from 'react'\r\n\r\nexport default function index() {\r\n  return (\r\n    <div>Home</div>\r\n  )\r\n}\r\n"],"names":["index"],"sourceRoot":""}

@@ -16,7 +16,7 @@ import moment from "moment";
 import "./index.scss";
 import { LoadingOutlined, SearchOutlined } from "@ant-design/icons";
 
-import { getAuthorityPage, refreshAuthorityList } from "../../api";
+import { getAuthorityPage, refreshAuthorityList } from "api";
 export default function Authority() {
     const [loading, setLoading] = useState(true);
     const [articleTableData, setAticleTableData] = useState({

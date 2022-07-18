@@ -7,8 +7,8 @@ import {
     VerifiedOutlined,
 } from "@ant-design/icons";
 import "./index.scss";
-import global from "../../utils/global";
-import { userLogin } from "../../api/index";
+import global from "utils/global";
+import { userLogin } from "api";
 // import { useStore } from "../../store";
 export default function Login() {
     // const { loginStore } = useStore();
