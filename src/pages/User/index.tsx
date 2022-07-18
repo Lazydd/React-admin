@@ -12,7 +12,9 @@ import {
     Tag,
     Input,
     Transfer,
-    Switch,
+    Radio,
+    Select,
+    InputNumber,
 } from "antd";
 import type { TransferDirection } from "antd/es/transfer";
 import type { ColumnsType } from "antd/lib/table";
@@ -23,6 +25,7 @@ import {
     deleteUser,
     getRoleList,
     relationRole,
+    disableUser,
 } from "../../api";
 import "./index.scss";
 import {
@@ -30,6 +33,8 @@ import {
     PlusOutlined,
     ApiOutlined,
     ToolOutlined,
+    LockOutlined,
+    UnlockOutlined,
 } from "@ant-design/icons";
 interface RecordType {
     key: string;
@@ -47,8 +52,10 @@ export default function User() {
     const [loading, setLoading] = useState(true);
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [visible, setVisible] = useState(false);
+    const [radio, setRadio] = useState(-10);
+    const [disableVisible, setDisableVisible] = useState(false);
     const [relationVisible, setRelationVisible] = useState(false);
-    const [articleTableData, setAticleTableData] = useState({
+    const [userTableData, setUserTableData] = useState({
         list: [],
         count: 0,
     });
@@ -64,13 +71,17 @@ export default function User() {
     const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
 
     const [form] = Form.useForm();
+    const [disableform] = Form.useForm();
     const layout = {
         labelCol: { span: 6 },
         wrapperCol: { span: 15 },
     };
     const handleCancel = () => {
         form.resetFields();
+        disableform.resetFields();
         setVisible(false);
+        setDisableVisible(false);
+        setConfirmLoading(false);
     };
     const relationCancel = () => {
         form.resetFields();
@@ -112,6 +123,9 @@ export default function User() {
             title: "封禁时长",
             width: 180,
             dataIndex: "disableTime",
+            render: (time: number) => (
+                <div>{time == -1 ? "永久封禁" : time ? time + "秒" : ""}</div>
+            ),
         },
         {
             title: "操作",
@@ -121,11 +135,20 @@ export default function User() {
             render: (item) => (
                 <div className="control-group">
                     <Space size="middle">
-                        <Switch
-                            checkedChildren="开启"
-                            unCheckedChildren="关闭"
-                            defaultChecked={item.disable}
-                        />
+                        <Button
+                            type="primary"
+                            shape="circle"
+                            icon={
+                                item.disable ? (
+                                    <LockOutlined />
+                                ) : (
+                                    <UnlockOutlined />
+                                )
+                            }
+                            onClick={() => {
+                                disable(item);
+                            }}
+                        ></Button>
                         <Button
                             type="primary"
                             shape="circle"
@@ -191,6 +214,53 @@ export default function User() {
             .finally(() => {
                 setConfirmLoading(false);
             });
+    };
+
+    const radioChange = (e: any) => {
+        setRadio(e.target.value);
+    };
+
+    const disableOnFinish = (values: any) => {
+        let time;
+        if (values.type == 0) {
+            time = values.time;
+        } else if (values.type == 1) {
+            time = undefined;
+        } else if (values.type == -1) {
+            time = -1;
+        }
+        setConfirmLoading(true);
+        disableUser({ time, id: disableform.getFieldValue("id") })
+            .then((res: any) => {
+                if (res.code == 200) {
+                    setDisableVisible(false);
+                    message.success("保存成功");
+                    setParams({ ...params, current: 1 });
+                } else {
+                    message.error(res.error);
+                }
+            })
+            .finally(() => {
+                setConfirmLoading(false);
+            });
+    };
+
+    const disable = (item: any) => {
+        setDisableVisible(true);
+        let type;
+        if (item.disable && item.disableTime == -1) {
+            type = -1;
+        } else if (item.disable && item.disableTime != -1) {
+            type = 0;
+        } else if (!item.disable) {
+            type = 1;
+        }
+        setRadio(item.disable && item.disableTime != -1 ? 0 : 1);
+        disableform.setFieldsValue({
+            ...item,
+            type,
+            time: type == 0 ? item.disableTime : undefined,
+        });
     };
 
     const onSearch = (roleName: string) => {
@@ -288,7 +358,7 @@ export default function User() {
         })
             .then((res: any) => {
                 if (res.code == 200) {
-                    setAticleTableData({
+                    setUserTableData({
                         list: res.records,
                         count: res.total,
                     });
@@ -306,15 +376,6 @@ export default function User() {
         getData();
     }, [params]);
 
-    // useEffect(() => {
-    //     getRoleList({ userId }).then((res: any) => {
-    //         if (res.code == 200) {
-    //             setRoleList(res.records);
-    //         } else {
-    //             message.error(res.error);
-    //         }
-    //     });
-    // }, []);
     return (
         <>
             <Breadcrumb>
@@ -346,7 +407,7 @@ export default function User() {
                     }}
                 >
                     <p style={{ marginBottom: 0 }}>
-                        根据筛选条件共查询到{articleTableData.count}条结果
+                        根据筛选条件共查询到{userTableData.count}条结果
                     </p>
                     <Button
                         type="primary"
@@ -361,13 +422,13 @@ export default function User() {
                 <Table
                     className="menuMainTainTable"
                     columns={columns}
-                    dataSource={articleTableData.list || []}
+                    dataSource={userTableData.list || []}
                     scroll={{ x: 1300 }}
                     pagination={{
                         pageSize: params.size,
                         current: params.current,
                         onChange: pageChange,
-                        total: articleTableData.count,
+                        total: userTableData.count,
                         showSizeChanger: false,
                     }}
                     rowKey={(record) => record.id}
@@ -433,6 +494,54 @@ export default function User() {
                     render={(item) => item.roleName}
                     pagination
                 />
+            </Modal>
+            <Modal
+                title="禁用"
+                visible={disableVisible}
+                onOk={() => disableform.submit()}
+                onCancel={handleCancel}
+                confirmLoading={confirmLoading}
+                forceRender
+                okText="确定"
+                cancelText="取消"
+            >
+                <Form {...layout} form={disableform} onFinish={disableOnFinish}>
+                    <Form.Item
+                        name="type"
+                        label="状态"
+                        rules={[
+                            {
+                                required: true,
+                                message: "请选择状态",
+                            },
+                        ]}
+                    >
+                        <Radio.Group
+                            buttonStyle="solid"
+                            onChange={(e) => radioChange(e)}
+                        >
+                            <Radio.Button value={0}>禁用</Radio.Button>
+                            <Radio.Button value={1}>启用</Radio.Button>
+                            <Radio.Button value={-1}>永久封禁</Radio.Button>
+                        </Radio.Group>
+                    </Form.Item>
+                    {radio == 0 ? (
+                        <Form.Item
+                            name="time"
+                            label="封禁时长"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "请输入封禁时长",
+                                },
+                            ]}
+                        >
+                            <InputNumber min={1} />
+                        </Form.Item>
+                    ) : (
+                        ""
+                    )}
+                </Form>
             </Modal>
         </>
     );

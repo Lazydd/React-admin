@@ -5,7 +5,7 @@ import { getWeather, getLocalPosition, getUserInfo } from "../../api";
 import "./index.scss";
 import { Menu, Avatar, Dropdown, Space, message, Button } from "antd";
 import {
-    RedditOutlined,
+    BugOutlined,
     MenuUnfoldOutlined,
     MenuFoldOutlined,
     HomeOutlined,
@@ -101,7 +101,7 @@ export default function Layout() {
     return (
         <div className="Layout">
             <header>
-                <RedditOutlined />
+                <BugOutlined />
                 <div className="weather">
                     天气：{weather.temperature}℃ {weather.weather}
                 </div>

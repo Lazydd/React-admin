@@ -67,6 +67,10 @@ export const deleteUser = (id: string) => {
     return instance.delete("/system/user/remove", { params: { ids: id } });
 };
 
+export const disableUser = (params: Object) => {
+    return instance.post("/system/user/disable", params);
+};
+
 export const getAuthorityPage = (params: Object) => {
     return instance.get("/system/api/page", { params });
 };
