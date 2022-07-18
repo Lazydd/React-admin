@@ -6,9 +6,6 @@ const instance = axios.create({
     // baseUrl: "http://",
     // timeout: 30000,
 });
-const error = (msg: string) => {
-    message.error(msg);
-};
 instance.interceptors.request.use((request: any) => {
     if (!request.url.includes("/v3/")) request.url = "/v1_0" + request.url;
 
@@ -41,13 +38,14 @@ instance.interceptors.response.use(
         if (response.status >= 200 && response.status < 300) {
             if (response.data.code === 401) {
                 message.error(response.data.error);
-            } else {
-                return response.data;
+            } else if (response.data.code >= -1 && response.data.code <= -1) {
+                window.location.href = "/login";
             }
+            return response.data;
         }
     },
     (err: any) => {
-        error(err.message);
+        message.error(err.message);
         throw new Error("网络错误");
     }
 );
