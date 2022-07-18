@@ -1,4 +1,4 @@
-import { instance } from "../utils/axios";
+import { instance } from "utils/axios";
 
 export const userLogin = (data: object) => {
     return instance({
@@ -9,7 +9,7 @@ export const userLogin = (data: object) => {
 };
 
 export const getUserInfo = () => {
-    return instance.get("/system/user/current/user");
+    return instance.get("/user/current/user");
 };
 
 export const getWeather = (city: string) => {
@@ -24,69 +24,69 @@ export const getLocalPosition = () => {
 };
 
 export const getRoleListPage = (params: Object) => {
-    return instance.get("/system/role/page", { params });
+    return instance.get("/role/page", { params });
 };
 
 export const getRoleList = (params: Object) => {
-    return instance.get("/system/role/list", { params });
+    return instance.get("/role/list", { params });
 };
 
 export const saveRole = (params: Object) => {
-    return instance.post("/system/role/save", params);
+    return instance.post("/role/save", params);
 };
 
 export const updateRole = (params: Object) => {
-    return instance.post("/system/role/update", params);
+    return instance.post("/role/update", params);
 };
 
 export const deleteRole = (id: string) => {
-    return instance.delete("/system/role/remove", { params: { ids: id } });
+    return instance.delete("/role/remove", { params: { ids: id } });
 };
 
 export const relationApi = (params: Object) => {
-    return instance.post("/system/role/relation/api", params);
+    return instance.post("/role/relation/api", params);
 };
 
 export const getUserList = (params: Object) => {
-    return instance.get("/system/user/page", { params });
+    return instance.get("/user/page", { params });
 };
 
 export const saveUser = (params: Object) => {
-    return instance.post("/system/user/save", params);
+    return instance.post("/user/save", params);
 };
 
 export const changeUserType = (params: Object) => {
-    return instance.post("/system/user/page", params);
+    return instance.post("/user/page", params);
 };
 
 export const resetUser = (id: string) => {
-    return instance.post("/system/user/reset/password", { id });
+    return instance.post("/user/reset/password", { id });
 };
 
 export const deleteUser = (id: string) => {
-    return instance.delete("/system/user/remove", { params: { ids: id } });
+    return instance.delete("/user/remove", { params: { ids: id } });
 };
 
 export const disableUser = (params: Object) => {
-    return instance.post("/system/user/disable", params);
+    return instance.post("/user/disable", params);
 };
 
 export const getAuthorityPage = (params: Object) => {
-    return instance.get("/system/api/page", { params });
+    return instance.get("/api/page", { params });
 };
 
 export const getAuthorityList = (params: Object) => {
-    return instance.get("/system/api/list", { params });
+    return instance.get("/api/list", { params });
 };
 
 export const refreshAuthorityList = () => {
-    return instance.get("/system/api/refresh");
+    return instance.get("/api/refresh");
 };
 
 export const relationRole = (params: Object) => {
-    return instance.post("/system/user/relation/role", params);
+    return instance.post("/user/relation/role", params);
 };
 
 export const getLogPage = (params: Object) => {
-    return instance.get("/system/logs/page", { params });
+    return instance.get("/logs/page", { params });
 };

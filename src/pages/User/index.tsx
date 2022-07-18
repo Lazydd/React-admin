@@ -15,6 +15,7 @@ import {
     Radio,
     Select,
     InputNumber,
+    Switch,
 } from "antd";
 import type { TransferDirection } from "antd/es/transfer";
 import type { ColumnsType } from "antd/lib/table";
@@ -132,10 +133,10 @@ export default function User() {
             align: "center",
             fixed: "right",
             width: 160,
-            render: (item) => (
+            render: (item: any) => (
                 <div className="control-group">
                     <Space size="middle">
-                        <Button
+                        {/* <Button
                             type="primary"
                             shape="circle"
                             icon={
@@ -148,7 +149,13 @@ export default function User() {
                             onClick={() => {
                                 disable(item);
                             }}
-                        ></Button>
+                        ></Button> */}
+                        <Switch
+                            checkedChildren="启用"
+                            unCheckedChildren="禁用"
+                            defaultChecked={!item.disable}
+                            onChange={(e) => switchChange(e, item)}
+                        />
                         <Button
                             type="primary"
                             shape="circle"
@@ -207,6 +214,25 @@ export default function User() {
                     setVisible(false);
                     setParams({ ...params, current: 1 });
                     message.success("保存成功");
+                } else {
+                    message.error(res.error);
+                }
+            })
+            .finally(() => {
+                setConfirmLoading(false);
+            });
+    };
+
+    const switchChange = (value: boolean, item: any) => {
+        disableUser({
+            time: value ? undefined : -1,
+            id: item.id,
+        })
+            .then((res: any) => {
+                if (res.code == 200) {
+                    setDisableVisible(false);
+                    message.success("保存成功");
+                    setParams({ ...params, current: 1 });
                 } else {
                     message.error(res.error);
                 }
@@ -396,7 +422,6 @@ export default function User() {
             </Card>
             <Card
                 style={{ width: "100%", marginTop: 20, overflow: "hidden" }}
-                loading={loading}
             >
                 <div
                     style={{
@@ -495,7 +520,7 @@ export default function User() {
                     pagination
                 />
             </Modal>
-            <Modal
+            {/* <Modal
                 title="禁用"
                 visible={disableVisible}
                 onOk={() => disableform.submit()}
@@ -542,7 +567,7 @@ export default function User() {
                         ""
                     )}
                 </Form>
-            </Modal>
+            </Modal> */}
         </>
     );
 }

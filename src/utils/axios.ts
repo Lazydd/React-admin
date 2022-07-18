@@ -7,7 +7,8 @@ const instance = axios.create({
     // timeout: 30000,
 });
 instance.interceptors.request.use((request: any) => {
-    if (!request.url.includes("/v3/")) request.url = "/v1_0" + request.url;
+    if (!request.url.includes("/v3/") && !request.url.includes("/login/"))
+        request.url = "/system" + request.url;
 
     if (global.getStorage("tokenName") && global.getStorage("tokenValue")) {
         request.headers["Authorization"] =
