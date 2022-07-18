@@ -40,7 +40,7 @@ instance.interceptors.response.use(
             if (response.data.code === 401) {
                 message.error(response.data.error);
             } else if (response.data.code >= -1 && response.data.code <= -1) {
-                window.location.href = "/login";
+                window.location.href = "/#/login";
             }
             return response.data;
         }
