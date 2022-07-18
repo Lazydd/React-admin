@@ -422,6 +422,7 @@ export default function User() {
             </Card>
             <Card
                 style={{ width: "100%", marginTop: 20, overflow: "hidden" }}
+                // loading={loading}
             >
                 <div
                     style={{
