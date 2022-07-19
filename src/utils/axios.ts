@@ -1,7 +1,7 @@
 import axios from "axios";
 import qs from "qs";
 import global from "./global";
-import { message } from "antd";
+import { message, Modal } from "antd";
 const instance = axios.create({
     // baseUrl: "http://",
     // timeout: 30000,
@@ -39,8 +39,8 @@ instance.interceptors.response.use(
         if (response.status >= 200 && response.status < 300) {
             if (response.data.code === 401) {
                 message.error(response.data.error);
-            } else if (response.data.code >= -1 && response.data.code <= -1) {
-                window.location.href = "/#/login";
+            } else if (response.data.code >= -5 && response.data.code <= -1) {
+                window.location.hash = "/login";
             }
             return response.data;
         }

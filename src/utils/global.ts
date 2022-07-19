@@ -1,5 +1,5 @@
 const global = {
-    getCookie(key: any) {
+    getCookie(key: string) {
         const data = document.cookie;
 
         let startIndex = data.indexOf(key + "=");
@@ -17,7 +17,7 @@ const global = {
         }
     },
 
-    setCookie(key: any, value: any, time?: any) {
+    setCookie(key: string, value: any, time?: any) {
         const times = time;
         const cur = new Date();
         cur.setTime(cur.getTime() + times * 24 * 3600 * 1000);
@@ -29,7 +29,7 @@ const global = {
             (times === undefined ? "" : cur.toUTCString());
     },
 
-    delCookie(key: any) {
+    delCookie(key: string) {
         const data = this.getCookie(key);
 
         if ((data as any) !== false) {
