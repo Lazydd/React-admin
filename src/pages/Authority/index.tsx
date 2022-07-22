@@ -194,10 +194,7 @@ export default function Authority() {
                     </Button>
                 </Form>
             </Card>
-            <Card
-                style={{ width: "100%", marginTop: 20, overflow: "hidden" }}
-                loading={loading}
-            >
+            <Card style={{ width: "100%", marginTop: 20, overflow: "hidden" }}>
                 <div
                     style={{
                         display: "flex",
@@ -232,6 +229,7 @@ export default function Authority() {
                         showSizeChanger: false,
                     }}
                     rowKey={(record) => record.id}
+                    loading={loading}
                 />
             </Card>
         </>

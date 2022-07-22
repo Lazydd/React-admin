@@ -135,6 +135,17 @@ export default function Authority() {
             ),
         },
         {
+            title: "创建时间",
+            width: 200,
+            dataIndex: "createdTime",
+            align: "center",
+            render: (text: any) => (
+                <span>
+                    {text ? moment(text).format("YYYY-MM-DD HH:mm:ss") : ""}
+                </span>
+            ),
+        },
+        {
             title: "平台",
             dataIndex: "platform",
             width: 150,
@@ -228,17 +239,6 @@ export default function Authority() {
                 </span>
             ),
         },
-        {
-            title: "创建时间",
-            width: 200,
-            dataIndex: "createdTime",
-            align: "center",
-            render: (text: any) => (
-                <span>
-                    {text ? moment(text).format("YYYY-MM-DD HH:mm:ss") : ""}
-                </span>
-            ),
-        },
     ];
 
     const onSearch = (likeKey: any) => {
@@ -297,10 +297,7 @@ export default function Authority() {
                     onSearch={onSearch}
                 />
             </Card>
-            <Card
-                style={{ width: "100%", marginTop: 20, overflow: "hidden" }}
-                loading={loading}
-            >
+            <Card style={{ width: "100%", marginTop: 20, overflow: "hidden" }}>
                 <div
                     style={{
                         display: "flex",
@@ -326,6 +323,7 @@ export default function Authority() {
                         showSizeChanger: false,
                     }}
                     rowKey={(record) => record.id}
+                    loading={loading}
                 />
             </Card>
             <Modal

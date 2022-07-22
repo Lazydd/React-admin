@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Outlet, useLocation } from "react-router-dom";
 import global from "utils/global";
-import { getWeather, getLocalPosition, getUserInfo } from "api";
+import { getWeather, getLocalPosition, getUserInfo, userLogout } from "api";
 import "./index.scss";
 import { Menu, Avatar, Dropdown, Space, message, Button } from "antd";
 import {
+    createFromIconfontCN,
     BugOutlined,
     MenuUnfoldOutlined,
     MenuFoldOutlined,
@@ -13,7 +14,14 @@ import {
     TeamOutlined,
     LockOutlined,
     ExceptionOutlined,
+    ScheduleOutlined,
 } from "@ant-design/icons";
+const IconFont = createFromIconfontCN({
+    scriptUrl: [
+        "//at.alicdn.com/t/font_1788044_0dwu4guekcwr.js", // icon-javascript, icon-java, icon-shoppingcart (overrided)
+        "//at.alicdn.com/t/font_1788592_a5xf2bdic3u.js", // icon-shoppingcart, icon-python
+    ],
+});
 export default function Layout() {
     const navigation = useNavigate();
     const { pathname } = useLocation();
@@ -44,15 +52,31 @@ export default function Layout() {
             key: "/log",
             icon: <ExceptionOutlined />,
         },
+        {
+            label: "任务管理",
+            key: "/task",
+            icon: <ScheduleOutlined />,
+        },
     ];
     function exitClick() {
-        global.delStorage("tokenName");
-        global.delStorage("tokenValue");
-        message.success("退出成功");
-        navigation("/login", {
-            replace: true,
-            state: {},
+        userLogout().then((res: any) => {
+            if (res.code == 200) {
+                if (res.data) {
+                    message.success("退出成功");
+                    navigation("/login", {
+                        replace: true,
+                        state: {},
+                    });
+                } else {
+                    message.error("退出失败");
+                }
+            } else {
+                message.error(res.error);
+            }
         });
+        //由java控制
+        // global.delStorage("tokenName");
+        // global.delStorage("tokenValue");
     }
     function onSelect(item: any) {
         navigation(item.key);

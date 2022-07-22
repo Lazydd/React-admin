@@ -7,6 +7,7 @@ const Role = lazy(() => import("pages/Role/index.tsx"));
 const User = lazy(() => import("pages/User/index.tsx"));
 const Authority = lazy(() => import("pages/Authority/index.tsx"));
 const Log = lazy(() => import("pages/Log/index.tsx"));
+const Task = lazy(() => import("pages/Task/index.tsx"));
 const AuthComponent = lazy(() => import("components/AuthComponents.tsx"));
 
 export default [
@@ -33,6 +34,10 @@ export default [
             {
                 path: '/log',
                 element: <Log />,
+            },
+            {
+                path: '/task',
+                element: <Task />,
             },
         ]
     },

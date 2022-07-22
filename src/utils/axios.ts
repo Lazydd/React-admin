@@ -10,12 +10,13 @@ instance.interceptors.request.use((request: any) => {
     if (!request.url.includes("/v3/") && !request.url.includes("/login/"))
         request.url = "/system" + request.url;
 
-    if (global.getStorage("tokenName") && global.getStorage("tokenValue")) {
-        request.headers["Authorization"] =
-            global.getStorage("tokenName") +
-            " " +
-            `${global.getStorage("tokenValue")}`;
-    }
+    //这里由java控制
+    // if (global.getStorage("tokenName") && global.getStorage("tokenValue")) {
+    //     request.headers["Authorization"] =
+    //         global.getStorage("tokenName") +
+    //         " " +
+    //         `${global.getStorage("tokenValue")}`;
+    // }
 
     if (
         request.data &&

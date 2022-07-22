@@ -42,10 +42,10 @@ export default function Login() {
             device: "PC",
         }).then((res: any) => {
             if (res.code == 200) {
-                let { tokenName, tokenValue } = res.data;
-                global.setStorage("tokenName", tokenName);
-                global.setStorage("tokenValue", tokenValue);
-                // global.setStorage("userName", tokenValue);
+                //保存登录信息
+                // let { tokenName, tokenValue } = res.data;
+                // global.setStorage("tokenName", tokenName);
+                // global.setStorage("tokenValue", tokenValue);
                 navigation("/", {
                     replace: true,
                     state: {},

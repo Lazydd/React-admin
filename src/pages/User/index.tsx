@@ -355,7 +355,7 @@ export default function User() {
     const reset = (item: any) => {
         resetUser(item.id).then((res: any) => {
             if (res.code == 200) {
-                message.success("重置密码成功");
+                message.success("重置密码成功，新密码为" + res.data);
             } else {
                 message.error(res.error);
             }
@@ -420,10 +420,7 @@ export default function User() {
                     onSearch={onSearch}
                 />
             </Card>
-            <Card
-                style={{ width: "100%", marginTop: 20, overflow: "hidden" }}
-                // loading={loading}
-            >
+            <Card style={{ width: "100%", marginTop: 20, overflow: "hidden" }}>
                 <div
                     style={{
                         display: "flex",
@@ -458,6 +455,7 @@ export default function User() {
                         showSizeChanger: false,
                     }}
                     rowKey={(record) => record.id}
+                    loading={loading}
                 />
             </Card>
             <Modal
