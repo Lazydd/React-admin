@@ -102,3 +102,11 @@ export const getTaskList = (params: Object) => {
 export const saveTask = (params: Object) => {
     return $axios.post("/job/create/task", params);
 };
+
+export const pauseTask = (params: Object) => {
+    return $axios.get("/job/pause/trigger", { params });
+};
+
+export const resumeTask = (params: Object) => {
+    return $axios.get("/job/resume/trigger", { params });
+};

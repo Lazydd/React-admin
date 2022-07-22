@@ -17,7 +17,7 @@ import {
 } from "antd";
 import type { TransferDirection } from "antd/es/transfer";
 import type { ColumnsType } from "antd/lib/table";
-import { deleteUser, disableUser, getTaskList, saveTask } from "api";
+import { deleteUser, getTaskList, saveTask, pauseTask, resumeTask } from "api";
 import "./index.scss";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 
@@ -29,7 +29,6 @@ export default function Task() {
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [visible, setVisible] = useState(false);
     const [radio, setRadio] = useState(-10);
-    const [disableVisible, setDisableVisible] = useState(false);
     const [userTableData, setUserTableData] = useState({
         list: [],
         count: 0,
@@ -53,7 +52,6 @@ export default function Task() {
         form.resetFields();
         disableform.resetFields();
         setVisible(false);
-        setDisableVisible(false);
         setConfirmLoading(false);
     };
     interface DataType {
@@ -96,6 +94,18 @@ export default function Task() {
             title: "组名",
             width: 180,
             dataIndex: "groupName",
+        },
+        {
+            title: "trigger名称",
+            width: 180,
+            dataIndex: "triggerKey",
+            render: (text: any) => <span>{text.name}</span>,
+        },
+        {
+            title: "trigger组",
+            width: 180,
+            dataIndex: "triggerKey",
+            render: (text: any) => <span>{text.group}</span>,
         },
         {
             title: "时区",
@@ -198,55 +208,46 @@ export default function Task() {
     };
 
     const switchChange = (value: boolean, item: any) => {
-        disableUser({
-            time: value ? undefined : -1,
-            id: item.id,
-        })
-            .then((res: any) => {
-                if (res.code == 200) {
-                    setDisableVisible(false);
-                    message.success("保存成功");
-                    setParams({ ...params, current: 1 });
-                } else {
-                    message.error(res.error);
-                }
+        if (value) {
+            pauseTask({
+                groupName: item?.groupName,
+                name: item?.triggerKey?.name,
             })
-            .finally(() => {
-                setConfirmLoading(false);
-            });
-    };
-
-    const radioChange = (e: any) => {
-        setRadio(e.target.value);
-    };
-
-    const disableOnFinish = (values: any) => {
-        let time;
-        if (values.type == 0) {
-            time = values.time;
-        } else if (values.type == 1) {
-            time = undefined;
-        } else if (values.type == -1) {
-            time = -1;
+                .then((res: any) => {
+                    if (res.code == 200) {
+                        if (res.data) {
+                            message.success("操作成功");
+                            setParams({ ...params, current: 1 });
+                        }
+                    } else {
+                        message.error(res.error);
+                    }
+                })
+                .finally(() => {
+                    setConfirmLoading(false);
+                });
+        } else {
+            resumeTask({
+                groupName: item?.groupName,
+                name: item?.triggerKey?.name,
+            })
+                .then((res: any) => {
+                    if (res.code == 200) {
+                        if (res.data) {
+                            message.success("操作成功");
+                            setParams({ ...params, current: 1 });
+                        }
+                    } else {
+                        message.error(res.error);
+                    }
+                })
+                .finally(() => {
+                    setConfirmLoading(false);
+                });
         }
-        setConfirmLoading(true);
-        disableUser({ time, id: disableform.getFieldValue("id") })
-            .then((res: any) => {
-                if (res.code == 200) {
-                    setDisableVisible(false);
-                    message.success("保存成功");
-                    setParams({ ...params, current: 1 });
-                } else {
-                    message.error(res.error);
-                }
-            })
-            .finally(() => {
-                setConfirmLoading(false);
-            });
     };
 
     const disable = (item: any) => {
-        setDisableVisible(true);
         let type;
         if (item.disable && item.disableTime == -1) {
             type = -1;
@@ -350,7 +351,7 @@ export default function Task() {
                     }}
                 >
                     <p style={{ marginBottom: 0 }}>
-                        根据筛选条件共查询到{userTableData.count}条结果
+                        根据筛选条件共查询到{userTableData.count || 0}条结果
                     </p>
                     <Button
                         type="primary"
