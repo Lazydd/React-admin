@@ -15,6 +15,7 @@ import {
     LockOutlined,
     ExceptionOutlined,
     ScheduleOutlined,
+    AlignRightOutlined,
 } from "@ant-design/icons";
 const IconFont = createFromIconfontCN({
     scriptUrl: [

@@ -137,3 +137,12 @@
         padding: 0 50px;
     }
 }
+
+@media screen and(max-width: 650px) {
+}
+
+@media (max-width: 640px) {
+    .Layout header ul {
+        display: none;
+    }
+}
