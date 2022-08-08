@@ -140,7 +140,7 @@ export default function Layout() {
                         className="navList"
                         onClick={() =>
                             window.open(
-                                "http://192.168.2.13:3000/v1_0/doc.html"
+                                "http://120.26.142.251:8888/doc.html#/home"
                             )
                         }
                     >
