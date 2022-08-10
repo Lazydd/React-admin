@@ -436,7 +436,7 @@ export default function Task() {
                 />
             </Card>
             <Modal
-                title={form.getFieldValue("id") ? "编辑" : "新增"}
+                title={edits ? "编辑" : "新增"}
                 visible={visible}
                 onOk={() => form.submit()}
                 onCancel={handleCancel}
