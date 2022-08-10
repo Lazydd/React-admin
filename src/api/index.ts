@@ -95,18 +95,26 @@ export const getLogPage = (params: Object) => {
     return $axios.get("/logs/page", { params });
 };
 
-export const getTaskList = (params: Object) => {
-    return $axios.get("/job/all/jobs", { params });
+export const getTaskList = () => {
+    return $axios.get("/job/all/task");
 };
 
-export const saveTask = (params: Object) => {
+export const createTask = (params: Object) => {
     return $axios.post("/job/create/task", params);
 };
 
-export const pauseTask = (params: Object) => {
-    return $axios.get("/job/pause/trigger", { params });
+export const updateTask = (params: Object) => {
+    return $axios.post("/job/update", params);
 };
 
-export const resumeTask = (params: Object) => {
-    return $axios.get("/job/resume/trigger", { params });
+export const switchTask = (params: Object) => {
+    return $axios.get("/job/switch", { params });
+};
+
+export const removeTask = (params: Object) => {
+    return $axios.get("/job/remove", { params });
+};
+
+export const allJobs = () => {
+    return $axios.get("/job/all/Jobs");
 };

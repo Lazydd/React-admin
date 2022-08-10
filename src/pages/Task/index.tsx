@@ -14,25 +14,36 @@ import {
     Tooltip,
     Radio,
     DatePicker,
+    Select,
 } from "antd";
 import type { TransferDirection } from "antd/es/transfer";
 import type { ColumnsType } from "antd/lib/table";
-import { deleteUser, getTaskList, saveTask, pauseTask, resumeTask } from "api";
+import {
+    getTaskList,
+    createTask,
+    updateTask,
+    switchTask,
+    removeTask,
+    allJobs,
+} from "api";
 import "./index.scss";
-import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { DeleteOutlined, PlusOutlined, EditOutlined } from "@ant-design/icons";
 
 const { Search, TextArea } = Input;
+const { Option } = Select;
 import moment from "moment";
 
 export default function Task() {
     const [loading, setLoading] = useState(true);
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [visible, setVisible] = useState(false);
+    const [edits, setEdits] = useState(false);
     const [radio, setRadio] = useState(-10);
     const [userTableData, setUserTableData] = useState({
         list: [],
         count: 0,
     });
+    const [jobs, setJobs] = useState([]);
     const [params, setParams] = useState({
         current: 1,
         roleName: "",
@@ -58,10 +69,12 @@ export default function Task() {
         sequenceId: string;
         index: number;
         jobDetailName: string;
-        jobCronExpression: boolean;
+        jobCronExpression: string;
         groupName: string;
         timeZone: string;
         triggerState: string;
+        startTime: string;
+        endTime: string;
     }
     const columns: ColumnsType<DataType> = [
         {
@@ -74,8 +87,9 @@ export default function Task() {
         },
         {
             title: "任务名称",
-            dataIndex: "jobDetailName",
+            dataIndex: "jobKey",
             width: 200,
+            render: (text: any) => <span>{text.name}</span>,
         },
         {
             title: "任务描述",
@@ -93,7 +107,8 @@ export default function Task() {
         {
             title: "组名",
             width: 180,
-            dataIndex: "groupName",
+            dataIndex: "jobKey",
+            render: (text: any) => <span>{text.group}</span>,
         },
         {
             title: "trigger名称",
@@ -108,15 +123,22 @@ export default function Task() {
             render: (text: any) => <span>{text.group}</span>,
         },
         {
-            title: "时区",
-            width: 180,
-            dataIndex: "timeZone",
-        },
-        {
             title: "状态",
             width: 180,
             dataIndex: "triggerState",
             render: (text: string) => <span>{formatType(text)}</span>,
+        },
+        {
+            title: "触发开始时间",
+            width: 180,
+            dataIndex: "startTime",
+            render: (text: any) => moment(text).format("YYYY-MM-DD HH:mm:ss"),
+        },
+        {
+            title: "触发结束时间",
+            width: 180,
+            dataIndex: "endTime",
+            render: (text: any) => moment(text).format("YYYY-MM-DD HH:mm:ss"),
         },
         {
             title: "操作",
@@ -126,6 +148,14 @@ export default function Task() {
             render: (item) => (
                 <div className="control-group">
                     <Space size="middle">
+                        <Button
+                            type="primary"
+                            shape="circle"
+                            icon={<EditOutlined />}
+                            onClick={() => {
+                                edit(item);
+                            }}
+                        ></Button>
                         <Switch
                             checkedChildren="正常"
                             unCheckedChildren="暂停"
@@ -155,10 +185,6 @@ export default function Task() {
             ),
         },
     ];
-    // const edit = (item: any) => {
-    //     setVisible(true);
-    //     form.setFieldsValue({ ...item });
-    // };
 
     const formatType = (item: string) => {
         let str = "";
@@ -191,34 +217,13 @@ export default function Task() {
             "YYYY-MM-DD HH:mm:ss"
         );
         values.endTime = moment(values.endTime).format("YYYY-MM-DD HH:mm:ss");
-
-        saveTask(values)
-            .then((res: any) => {
-                if (res.code == 200) {
-                    setVisible(false);
-                    setParams({ ...params, current: 1 });
-                    message.success("保存成功");
-                } else {
-                    message.error(res.error);
-                }
-            })
-            .finally(() => {
-                setConfirmLoading(false);
-            });
-    };
-
-    const switchChange = (value: boolean, item: any) => {
-        if (value) {
-            pauseTask({
-                groupName: item?.groupName,
-                name: item?.triggerKey?.name,
-            })
+        if (!edits) {
+            createTask(values)
                 .then((res: any) => {
                     if (res.code == 200) {
-                        if (res.data) {
-                            message.success("操作成功");
-                            setParams({ ...params, current: 1 });
-                        }
+                        setVisible(false);
+                        setParams({ ...params, current: 1 });
+                        message.success("保存成功");
                     } else {
                         message.error(res.error);
                     }
@@ -227,16 +232,12 @@ export default function Task() {
                     setConfirmLoading(false);
                 });
         } else {
-            resumeTask({
-                groupName: item?.groupName,
-                name: item?.triggerKey?.name,
-            })
+            updateTask(values)
                 .then((res: any) => {
                     if (res.code == 200) {
-                        if (res.data) {
-                            message.success("操作成功");
-                            setParams({ ...params, current: 1 });
-                        }
+                        setVisible(false);
+                        setParams({ ...params, current: 1 });
+                        message.success("保存成功");
                     } else {
                         message.error(res.error);
                     }
@@ -245,6 +246,49 @@ export default function Task() {
                     setConfirmLoading(false);
                 });
         }
+    };
+
+    const edit = (item: any) => {
+        showDialog();
+        setEdits(true);
+        let { jobKey, triggerKey } = item;
+        let obj = {
+            ...item,
+            startTime: moment(item.startTime),
+            endTime: moment(item.endTime),
+            cron: item.jobCronExpression,
+            jobName: jobKey.name,
+            jobGroup: jobKey.group,
+            triggerGroup: triggerKey.group,
+            triggerName: triggerKey.name,
+        };
+
+        setVisible(true);
+        form.setFieldsValue(obj);
+    };
+
+    const switchChange = (value: boolean, item: any) => {
+        let { jobKey, triggerKey } = item;
+        switchTask({
+            pauseJob: value,
+            jobName: jobKey.name,
+            jobGroup: jobKey.group,
+            triggerGroup: triggerKey.group,
+            triggerName: triggerKey.name,
+        })
+            .then((res: any) => {
+                if (res.code == 200) {
+                    if (res.data) {
+                        message.success("操作成功");
+                        setParams({ ...params, current: 1 });
+                    }
+                } else {
+                    message.error(res.error);
+                }
+            })
+            .finally(() => {
+                setConfirmLoading(false);
+            });
     };
 
     const disable = (item: any) => {
@@ -292,7 +336,14 @@ export default function Task() {
     };
 
     const confirm = (item: any) => {
-        deleteUser(item.id).then((res: any) => {
+        let { jobKey, triggerKey } = item;
+        let obj = {
+            jobName: jobKey.name,
+            jobGroup: jobKey.group,
+            triggerGroup: triggerKey.group,
+            triggerName: triggerKey.name,
+        };
+        removeTask(obj).then((res: any) => {
             if (res.code == 200) {
                 message.success("删除成功");
                 setParams({ ...params, current: 1 });
@@ -302,11 +353,15 @@ export default function Task() {
         });
     };
 
-    const getData = async () => {
-        const res: any = await getTaskList({
-            ...params,
-            roleName: params.roleName || undefined,
+    const showDialog = () => {
+        setVisible(true);
+        allJobs().then((res) => {
+            setJobs(res.data);
         });
+    };
+
+    const getData = async () => {
+        const res: any = await getTaskList();
         if (res.code == 200) {
             setUserTableData({
                 list: res.data,
@@ -335,7 +390,7 @@ export default function Task() {
             </Breadcrumb>
             <Card style={{ width: "100%", marginTop: 20, overflow: "hidden" }}>
                 <Search
-                    placeholder="请输入角色名称"
+                    placeholder="请输入任务名称"
                     loading={loading}
                     enterButton
                     onSearch={onSearch}
@@ -357,7 +412,8 @@ export default function Task() {
                         type="primary"
                         icon={<PlusOutlined />}
                         onClick={() => {
-                            setVisible(true);
+                            showDialog();
+                            setEdits(false);
                         }}
                     >
                         新增
@@ -375,7 +431,7 @@ export default function Task() {
                         total: userTableData.count,
                         showSizeChanger: false,
                     }}
-                    rowKey={(record) => record.jobDetailName}
+                    rowKey={(record) => record.sequenceId}
                     loading={loading}
                 />
             </Card>
@@ -477,10 +533,15 @@ export default function Task() {
                                     },
                                 ]}
                             >
-                                <TextArea
-                                    placeholder="请输入cron表达式"
-                                    autoSize={{ minRows: 3, maxRows: 6 }}
-                                />
+                                <Select>
+                                    {jobs.map((item) => {
+                                        return (
+                                            <Option key={item} value={item}>
+                                                {item}
+                                            </Option>
+                                        );
+                                    })}
+                                </Select>
                             </Form.Item>
                         </div>
                         <div className="form-item">
