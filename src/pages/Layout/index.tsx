@@ -166,7 +166,7 @@ export default function Layout() {
             <div className="page">
                 <div
                     className="menu-box"
-                    style={{ width: collapsed ? "80px" : "240px" }}
+                    style={{ width: collapsed ? "5em" : "10em" }}
                 >
                     <div className="menu">
                         <Menu
