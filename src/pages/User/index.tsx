@@ -241,36 +241,7 @@ export default function User() {
                 setConfirmLoading(false);
             });
     };
-
-    const radioChange = (e: any) => {
-        setRadio(e.target.value);
-    };
-
-    const disableOnFinish = (values: any) => {
-        let time;
-        if (values.type == 0) {
-            time = values.time;
-        } else if (values.type == 1) {
-            time = undefined;
-        } else if (values.type == -1) {
-            time = -1;
-        }
-        setConfirmLoading(true);
-        disableUser({ time, id: disableform.getFieldValue("id") })
-            .then((res: any) => {
-                if (res.code == 200) {
-                    setDisableVisible(false);
-                    message.success("保存成功");
-                    setParams({ ...params, current: 1 });
-                } else {
-                    message.error(res.error);
-                }
-            })
-            .finally(() => {
-                setConfirmLoading(false);
-            });
-    };
-
+    
     const disable = (item: any) => {
         setDisableVisible(true);
         let type;
@@ -519,54 +490,6 @@ export default function User() {
                     pagination
                 />
             </Modal>
-            {/* <Modal
-                title="禁用"
-                visible={disableVisible}
-                onOk={() => disableform.submit()}
-                onCancel={handleCancel}
-                confirmLoading={confirmLoading}
-                forceRender
-                okText="确定"
-                cancelText="取消"
-            >
-                <Form {...layout} form={disableform} onFinish={disableOnFinish}>
-                    <Form.Item
-                        name="type"
-                        label="状态"
-                        rules={[
-                            {
-                                required: true,
-                                message: "请选择状态",
-                            },
-                        ]}
-                    >
-                        <Radio.Group
-                            buttonStyle="solid"
-                            onChange={(e) => radioChange(e)}
-                        >
-                            <Radio.Button value={0}>禁用</Radio.Button>
-                            <Radio.Button value={1}>启用</Radio.Button>
-                            <Radio.Button value={-1}>永久封禁</Radio.Button>
-                        </Radio.Group>
-                    </Form.Item>
-                    {radio == 0 ? (
-                        <Form.Item
-                            name="time"
-                            label="封禁时长"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "请输入封禁时长",
-                                },
-                            ]}
-                        >
-                            <InputNumber min={1} />
-                        </Form.Item>
-                    ) : (
-                        ""
-                    )}
-                </Form>
-            </Modal> */}
         </>
     );
 }

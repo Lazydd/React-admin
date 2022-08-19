@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Outlet, useLocation } from "react-router-dom";
 import global from "utils/global";
-import { getWeather, getLocalPosition, getUserInfo, userLogout } from "api";
+import {
+    getWeather,
+    getLocalPosition,
+    getUserInfo,
+    userLogout,
+    sourceToken,
+} from "api";
 import "./index.scss";
 import { Menu, Avatar, Dropdown, Space, message, Button } from "antd";
 import {
@@ -105,6 +111,7 @@ export default function Layout() {
                 });
             }
         });
+        sourceToken.cancel("取消请求");
         // getUserInfo()
         //     .then((res: any) => {
         //         setUserInfo(res.data);
@@ -139,9 +146,7 @@ export default function Layout() {
                     <li
                         className="navList"
                         onClick={() =>
-                            window.open(
-                                "http://localhost:8888/doc.html#/home"
-                            )
+                            window.open("http://localhost:8888/doc.html#/home")
                         }
                     >
                         文档

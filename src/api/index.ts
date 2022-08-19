@@ -1,4 +1,6 @@
 import { instance as $axios } from "utils/axios";
+import axios from "axios";
+let sourceToken = axios.CancelToken.source();
 
 export const userLogin = (data: object) => {
     return $axios({
@@ -19,7 +21,10 @@ export const getUserInfo = () => {
 export const getWeather = (city: string) => {
     return $axios.get(
         "/v3/weather/weatherInfo?key=6d78e0a70cbe6fc669f1a0705a85a5b5&city=" +
-            city
+            city,
+        {
+            cancelToken: sourceToken.token,
+        }
     );
 };
 
@@ -118,3 +123,5 @@ export const removeTask = (params: Object) => {
 export const allJobs = () => {
     return $axios.get("/job/all/Jobs");
 };
+
+export { sourceToken };
