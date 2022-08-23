@@ -1,7 +1,7 @@
 import useMousePosition from "hooks/useMousePosition";
 import React from "react";
 
-export default function index() {
+export default function Home() {
     const position = useMousePosition();
     return (
         <div
