@@ -146,7 +146,7 @@ export default function Layout() {
                     <li
                         className="navList"
                         onClick={() =>
-                            window.open("http://localhost:8888/doc.html#/home")
+                            window.open("http://ddlazy.cn:8888/doc.html")
                         }
                     >
                         文档
