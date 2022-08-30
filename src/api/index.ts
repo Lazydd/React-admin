@@ -4,18 +4,18 @@ let sourceToken = axios.CancelToken.source();
 
 export const userLogin = (data: object) => {
     return $axios({
-        url: "/login/doLogin",
+        url: "/system/login/doLogin",
         method: "POST",
         data,
     });
 };
 
 export const userLogout = () => {
-    return $axios.get("/login/logout");
+    return $axios.get("/system/login/logout");
 };
 
 export const getUserInfo = () => {
-    return $axios.get("/user/current/user");
+    return $axios.get("/system/user/current/user");
 };
 
 export const getWeather = (city: string) => {
@@ -33,95 +33,95 @@ export const getLocalPosition = () => {
 };
 
 export const getRoleListPage = (params: Object) => {
-    return $axios.get("/role/page", { params });
+    return $axios.get("/system/role/page", { params });
 };
 
 export const getRoleList = (params: Object) => {
-    return $axios.get("/role/list", { params });
+    return $axios.get("/system/role/list", { params });
 };
 
 export const saveRole = (params: Object) => {
-    return $axios.post("/role/save", params);
+    return $axios.post("/system/role/save", params);
 };
 
 export const updateRole = (params: Object) => {
-    return $axios.post("/role/update", params);
+    return $axios.post("/system/role/update", params);
 };
 
 export const deleteRole = (id: string) => {
-    return $axios.delete("/role/remove", { params: { ids: id } });
+    return $axios.delete("/system/role/remove", { params: { ids: id } });
 };
 
 export const relationApi = (params: Object) => {
-    return $axios.post("/role/relation/api", params);
+    return $axios.post("/system/role/relation/api", params);
 };
 
 export const getUserList = (params: Object) => {
-    return $axios.get("/user/page", { params });
+    return $axios.get("/system/user/page", { params });
 };
 
 export const saveUser = (params: Object) => {
-    return $axios.post("/user/save", params);
+    return $axios.post("/system/user/save", params);
 };
 
 export const changeUserType = (params: Object) => {
-    return $axios.post("/user/page", params);
+    return $axios.post("/system/user/page", params);
 };
 
 export const resetUser = (id: string) => {
-    return $axios.post("/user/reset/password", { id });
+    return $axios.post("/system/user/reset/password", { id });
 };
 
 export const deleteUser = (id: string) => {
-    return $axios.delete("/user/remove", { params: { ids: id } });
+    return $axios.delete("/system/user/remove", { params: { ids: id } });
 };
 
 export const disableUser = (params: Object) => {
-    return $axios.post("/user/disable", params);
+    return $axios.post("/system/user/disable", params);
 };
 
 export const getAuthorityPage = (params: Object) => {
-    return $axios.get("/api/page", { params });
+    return $axios.get("/system/api/page", { params });
 };
 
 export const getAuthorityList = (params: Object) => {
-    return $axios.get("/api/list", { params });
+    return $axios.get("/system/api/list", { params });
 };
 
 export const refreshAuthorityList = () => {
-    return $axios.get("/api/refresh");
+    return $axios.get("/system/api/refresh");
 };
 
 export const relationRole = (params: Object) => {
-    return $axios.post("/user/relation/role", params);
+    return $axios.post("/system/user/relation/role", params);
 };
 
 export const getLogPage = (params: Object) => {
-    return $axios.get("/logs/page", { params });
+    return $axios.get("/system/logs/page", { params });
 };
 
 export const getTaskList = () => {
-    return $axios.get("/job/all/task");
+    return $axios.get("/system/job/all/task");
 };
 
 export const createTask = (params: Object) => {
-    return $axios.post("/job/create/task", params);
+    return $axios.post("/system/job/create/task", params);
 };
 
 export const updateTask = (params: Object) => {
-    return $axios.post("/job/update", params);
+    return $axios.post("/system/job/update", params);
 };
 
 export const switchTask = (params: Object) => {
-    return $axios.get("/job/switch", { params });
+    return $axios.get("/system/job/switch", { params });
 };
 
 export const removeTask = (params: Object) => {
-    return $axios.get("/job/remove", { params });
+    return $axios.get("/system/job/remove", { params });
 };
 
 export const allJobs = () => {
-    return $axios.get("/job/all/Jobs");
+    return $axios.get("/system/job/all/Jobs");
 };
 
 export { sourceToken };

@@ -7,8 +7,8 @@ const instance = axios.create({
     // timeout: 30000,
 });
 instance.interceptors.request.use((request: any) => {
-    if (!request.url.includes("/v3/") && !request.url.includes("/login/"))
-        request.url = "/system" + request.url;
+    if (!request.url.includes("/v3/") )
+        request.url = "/fastboot" + request.url;
 
     //这里由java控制
     // if (global.getStorage("tokenName") && global.getStorage("tokenValue")) {
