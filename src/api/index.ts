@@ -11,7 +11,7 @@ export const userLogin = (data: object) => {
 };
 
 export const userLogout = () => {
-    return $axios.get("/system/login/logout");
+    return $axios.get("/login/logout");
 };
 
 export const getUserInfo = () => {
