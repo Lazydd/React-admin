@@ -4,7 +4,7 @@ let sourceToken = axios.CancelToken.source();
 
 export const userLogin = (data: object) => {
     return $axios({
-        url: "/system/login/doLogin",
+        url: "/login/doLogin",
         method: "POST",
         data,
     });
