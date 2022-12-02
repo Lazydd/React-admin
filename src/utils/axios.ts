@@ -2,11 +2,14 @@ import axios from "axios";
 import qs from "qs";
 import global from "./global";
 import { message, Modal } from "antd";
+import NProgress from 'nprogress';
+NProgress.configure({ easing: 'ease', speed: 500 })
 const instance = axios.create({
     // baseUrl: "http://",
     // timeout: 30000,
 });
 instance.interceptors.request.use((request: any) => {
+    NProgress.start();
     if (!request.url.includes("/v3/") )
         request.url = "/fastboot" + request.url;
 
@@ -37,6 +40,7 @@ instance.interceptors.request.use((request: any) => {
 
 instance.interceptors.response.use(
     (response: any) => {
+        NProgress.done();
         if (response.status >= 200 && response.status < 300) {
             if (response.data.code === 401) {
                 message.error(response.data.error);

@@ -4,7 +4,7 @@ import { HashRouter } from "react-router-dom";
 import 'antd/dist/antd.min.css';
 import './index.css';
 import './index.scss'
-
+import 'nprogress/nprogress.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 

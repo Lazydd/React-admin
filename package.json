@@ -13,6 +13,7 @@
     "mobx": "^6.5.0",
     "mobx-react-lite": "^3.4.0",
     "moment": "^2.29.3",
+    "nprogress": "^0.2.0",
     "qs": "^6.10.3",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
@@ -48,6 +49,7 @@
     ]
   },
   "devDependencies": {
+    "@types/nprogress": "^0.2.0",
     "react-json-view": "^1.21.3",
     "sass": "^1.51.0"
   },
