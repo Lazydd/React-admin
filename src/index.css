@@ -5,6 +5,8 @@ body {
         "Helvetica Neue", sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* filter: grayscale(1);
+    -webkit-filter: grayscale(1); */
 }
 body,
 html {
@@ -15,5 +17,5 @@ code {
         monospace;
 }
 ul {
-  margin: 0;
+    margin: 0;
 }
